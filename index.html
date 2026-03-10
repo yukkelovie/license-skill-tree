@@ -190,16 +190,27 @@ animation:availPulse 2.8s ease-in-out infinite;
 }
 /* 解放済み */
 .sn.unlocked .sn-circle{
-border-color:var(–nc,var(–gold));
-background:#0c1018;
-box-shadow:0 0 14px var(–ng,#e8b84b2a),inset 0 0 16px #e8b84b08;
+border-color:#2dcc8a;
+border-width:3px;
+background:#041a10;
+box-shadow:0 0 16px #2dcc8a60, 0 0 32px #2dcc8a20, inset 0 0 12px #2dcc8a12;
+animation:doneGlow 2.5s ease-in-out infinite;
+}
+@keyframes doneGlow{
+0%,100%{box-shadow:0 0 12px #2dcc8a50, 0 0 24px #2dcc8a18;}
+50%{box-shadow:0 0 22px #2dcc8a90, 0 0 40px #2dcc8a35, inset 0 0 14px #2dcc8a20;}
 }
 /* 勉強中 */
 .sn.studying .sn-circle{
-border-color:var(–vermilion) !important;
-background:#180808 !important;
-box-shadow:0 0 14px #e8404030,inset 0 0 16px #e8404008 !important;
-animation:studyRing 2s ease-in-out infinite !important;
+border-color:#ff3030 !important;
+border-width:3px !important;
+background:#1a0505 !important;
+box-shadow:0 0 18px #ff303080, 0 0 36px #ff303030 !important;
+animation:studyRing 1.4s ease-in-out infinite !important;
+}
+@keyframes studyRing{
+0%,100%{box-shadow:0 0 14px #ff303070, 0 0 28px #ff303025;}
+50%{box-shadow:0 0 26px #ff3030cc, 0 0 50px #ff303055, inset 0 0 16px #ff303020;}
 }
 @keyframes studyRing{
 0%,100%{box-shadow:0 0 0 0 var(–vermilion),0 0 10px #e8404030;}
@@ -447,7 +458,7 @@ border:1px solid;
     <div class="studying-banner-dot"></div>
     <div class="studying-banner-text"><strong id="studyingNames"></strong> を勉強中</div>
   </div>
-  <div class="radar-wrap"><canvas id="radar" width="280" height="280"></canvas></div>
+  <div class="radar-wrap"><canvas id="radar" width="320" height="340"></canvas></div>
   <div class="param-bars" id="paramBars"></div>
   <div class="stat-cards" id="statCards"></div>
   <div class="param-level" id="paramLevel">
@@ -1596,7 +1607,7 @@ function drawRadar(){
   const ctx=canvas.getContext('2d');
   if(!ctx) return;
   const W=canvas.width, H=canvas.height;
-  const cx=W/2, cy=H/2, R=110;
+  const cx=W/2, cy=H/2+10, R=118;
   const p=calcParams();
   const keys=Object.keys(PARAMS);
   const N=keys.length;
@@ -1641,7 +1652,7 @@ function drawRadar(){
   // ラベル
   keys.forEach((k,i)=>{
     const a=(i/N)*Math.PI*2-Math.PI/2;
-    const lr=R+22;
+    const lr=R+30;
     const x=cx+Math.cos(a)*lr;
     const y=cy+Math.sin(a)*lr;
     ctx.font='bold 12px Share Tech Mono';
