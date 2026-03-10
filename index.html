@@ -453,7 +453,7 @@ border:1px solid;
     <div class="studying-banner-dot"></div>
     <div class="studying-banner-text"><strong id="studyingNames"></strong> を勉強中</div>
   </div>
-  <div class="radar-wrap"><canvas id="radar" width="320" height="340"></canvas></div>
+  <div class="radar-wrap"><canvas id="radar" width="320" height="360"></canvas></div>
   <div class="param-bars" id="paramBars"></div>
   <div class="stat-cards" id="statCards"></div>
   <div class="param-level" id="paramLevel">
@@ -1601,7 +1601,12 @@ function drawRadar(){
   if(!canvas) return;
   const ctx=canvas.getContext('2d');
   if(!ctx) return;
-  const W=canvas.width, H=canvas.height;
+  const dpr=window.devicePixelRatio||1;
+  const cssW=320, cssH=360;
+  canvas.width=cssW*dpr; canvas.height=cssH*dpr;
+  canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
+  ctx.scale(dpr,dpr);
+  const W=cssW, H=cssH;
   const cx=W/2, cy=H/2+10, R=118;
   const p=calcParams();
   const keys=Object.keys(PARAMS);
@@ -1650,13 +1655,12 @@ function drawRadar(){
     const lr=R+30;
     const x=cx+Math.cos(a)*lr;
     const y=cy+Math.sin(a)*lr;
-    ctx.font='bold 12px Share Tech Mono';
-    ctx.fillStyle=PARAMS[k].color;
+    ctx.font='11px serif';
     ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(PARAMS[k].icon,x,y-6);
-    ctx.font='bold 9px Noto Sans JP';
-    ctx.fillStyle=PARAMS[k].color+'99';
-    ctx.fillText(PARAMS[k].jlabel,x,y+6);
+    ctx.fillText(PARAMS[k].icon,x,y-7);
+    ctx.font='900 11px "Zen Kaku Gothic New",sans-serif';
+    ctx.fillStyle=PARAMS[k].color;
+    ctx.fillText(PARAMS[k].jlabel,x,y+7);
   });
 }
 
