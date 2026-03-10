@@ -1108,7 +1108,6 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
   <div id="shLinks"></div>
   <div id="shBtn"></div>
 </div>
-<div id="toast"></div>
 <div id="listOverlay" onclick="closeList()"></div>
 <div id="listModal"></div>
 
@@ -2284,11 +2283,7 @@ function burst(id){
 }
 
 let toastT=null;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2200);
-}
+function toast(msg){}
 
 // スワイプで閉じる
 (()=>{
@@ -2304,5 +2299,6 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+<div id="toast"></div>
 </body>
 </html>
