@@ -178,10 +178,10 @@ opacity:0;transition:opacity .2s;pointer-events:none;}
 .sn:active .sn-circle::after{opacity:1;}
 
 /* ロック */
-.sn.locked .sn-circle{border-color:#1e2a40;background:#0a1020;filter:grayscale(1);opacity:.55;}
+.sn.locked .sn-circle{border-color:#2a3a58;background:#0d1628;filter:grayscale(1);opacity:.65;}
 /* 解放可能 */
 .sn.available .sn-circle{
-border-color:#3a4a78;background:#0d1428;
+border-color:#4a5a90;background:#0f1830;
 animation:availPulse 2.8s ease-in-out infinite;
 }
 @keyframes availPulse{
@@ -190,27 +190,22 @@ animation:availPulse 2.8s ease-in-out infinite;
 }
 /* 解放済み */
 .sn.unlocked .sn-circle{
-border-color:#35e89a;
+border-color:#2dff90;
 border-width:3px;
-background:#051f12;
-box-shadow:0 0 20px #35e89a80, 0 0 40px #35e89a30, inset 0 0 14px #35e89a18;
-animation:doneGlow 2.5s ease-in-out infinite;
-}
-@keyframes doneGlow{
-0%,100%{box-shadow:0 0 16px #35e89a60, 0 0 30px #35e89a20;}
-50%{box-shadow:0 0 28px #35e89ab0, 0 0 52px #35e89a45, inset 0 0 18px #35e89a28;}
+background:#071a0f;
+box-shadow:0 0 0 2px #1a4d30, inset 0 0 10px #2dff9018;
 }
 /* 勉強中 */
 .sn.studying .sn-circle{
 border-color:#ff4444 !important;
 border-width:3px !important;
 background:#180808 !important;
-box-shadow:0 0 22px #ff4444a0, 0 0 44px #ff444440 !important;
-animation:studyRing 1.4s ease-in-out infinite !important;
+box-shadow:0 0 0 2px #4a1010, 0 0 20px #ff444460 !important;
+animation:studyRing 1.6s ease-in-out infinite !important;
 }
 @keyframes studyRing{
-0%,100%{box-shadow:0 0 18px #ff444490, 0 0 36px #ff444430;}
-50%{box-shadow:0 0 32px #ff4444e0, 0 0 60px #ff444465, inset 0 0 18px #ff444428;}
+0%,100%{box-shadow:0 0 0 2px #4a1010, 0 0 14px #ff444450;}
+50%{box-shadow:0 0 0 2px #7a1818, 0 0 28px #ff4444a0, inset 0 0 12px #ff444420;}
 }
 @keyframes studyRing{
 0%,100%{box-shadow:0 0 0 0 var(–vermilion),0 0 10px #e8404030;}
@@ -266,10 +261,10 @@ pointer-events:none;
 .sn.unlocked .sn-label{color:var(–nc,var(–gold));}
 .sn.studying .sn-label{color:var(–vermilion);}
 .sn.available .sn-label{color:#404e78;}
-.sn.locked .sn-label{color:#2e3f60;}
+.sn.locked .sn-label{color:#4a5f88;}
 
 /* コネクター */
-.conn-v{width:2px;border-radius:1px;background:#2a3a5a;transition:background .5s,box-shadow .5s;}
+.conn-v{width:2px;border-radius:1px;background:#3a5080;transition:background .5s,box-shadow .5s;}
 .conn-v.lit{background:var(–gold);box-shadow:0 0 6px #e8b84b55;}
 /* FP分岐用インラインdivへのlit対応 */
 #cv-fp2-afp.lit,#ch-fp2-l.lit{background:var(–gold) !important;box-shadow:0 0 5px #e8b84b55;}
