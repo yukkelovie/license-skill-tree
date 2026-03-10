@@ -178,10 +178,10 @@ opacity:0;transition:opacity .2s;pointer-events:none;}
 .sn:active .sn-circle::after{opacity:1;}
 
 /* ロック */
-.sn.locked .sn-circle{border-color:#0e1520;background:#070c14;filter:grayscale(1);opacity:.38;}
+.sn.locked .sn-circle{border-color:#1e2a40;background:#0a1020;filter:grayscale(1);opacity:.55;}
 /* 解放可能 */
 .sn.available .sn-circle{
-border-color:#252e50;background:#0b1020;
+border-color:#3a4a78;background:#0d1428;
 animation:availPulse 2.8s ease-in-out infinite;
 }
 @keyframes availPulse{
@@ -190,27 +190,27 @@ animation:availPulse 2.8s ease-in-out infinite;
 }
 /* 解放済み */
 .sn.unlocked .sn-circle{
-border-color:#2dcc8a;
+border-color:#35e89a;
 border-width:3px;
-background:#041a10;
-box-shadow:0 0 16px #2dcc8a60, 0 0 32px #2dcc8a20, inset 0 0 12px #2dcc8a12;
+background:#051f12;
+box-shadow:0 0 20px #35e89a80, 0 0 40px #35e89a30, inset 0 0 14px #35e89a18;
 animation:doneGlow 2.5s ease-in-out infinite;
 }
 @keyframes doneGlow{
-0%,100%{box-shadow:0 0 12px #2dcc8a50, 0 0 24px #2dcc8a18;}
-50%{box-shadow:0 0 22px #2dcc8a90, 0 0 40px #2dcc8a35, inset 0 0 14px #2dcc8a20;}
+0%,100%{box-shadow:0 0 16px #35e89a60, 0 0 30px #35e89a20;}
+50%{box-shadow:0 0 28px #35e89ab0, 0 0 52px #35e89a45, inset 0 0 18px #35e89a28;}
 }
 /* 勉強中 */
 .sn.studying .sn-circle{
-border-color:#ff3030 !important;
+border-color:#ff4444 !important;
 border-width:3px !important;
-background:#1a0505 !important;
-box-shadow:0 0 18px #ff303080, 0 0 36px #ff303030 !important;
+background:#180808 !important;
+box-shadow:0 0 22px #ff4444a0, 0 0 44px #ff444440 !important;
 animation:studyRing 1.4s ease-in-out infinite !important;
 }
 @keyframes studyRing{
-0%,100%{box-shadow:0 0 14px #ff303070, 0 0 28px #ff303025;}
-50%{box-shadow:0 0 26px #ff3030cc, 0 0 50px #ff303055, inset 0 0 16px #ff303020;}
+0%,100%{box-shadow:0 0 18px #ff444490, 0 0 36px #ff444430;}
+50%{box-shadow:0 0 32px #ff4444e0, 0 0 60px #ff444465, inset 0 0 18px #ff444428;}
 }
 @keyframes studyRing{
 0%,100%{box-shadow:0 0 0 0 var(–vermilion),0 0 10px #e8404030;}
@@ -266,10 +266,10 @@ pointer-events:none;
 .sn.unlocked .sn-label{color:var(–nc,var(–gold));}
 .sn.studying .sn-label{color:var(–vermilion);}
 .sn.available .sn-label{color:#404e78;}
-.sn.locked .sn-label{color:#1e2840;}
+.sn.locked .sn-label{color:#2e3f60;}
 
 /* コネクター */
-.conn-v{width:2px;border-radius:1px;background:var(–border);transition:background .5s,box-shadow .5s;}
+.conn-v{width:2px;border-radius:1px;background:#2a3a5a;transition:background .5s,box-shadow .5s;}
 .conn-v.lit{background:var(–gold);box-shadow:0 0 6px #e8b84b55;}
 /* FP分岐用インラインdivへのlit対応 */
 #cv-fp2-afp.lit,#ch-fp2-l.lit{background:var(–gold) !important;box-shadow:0 0 5px #e8b84b55;}
