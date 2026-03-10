@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>資格スキルツリー</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique+Soft&family=Noto+Sans+JP:wght@300;400;700;900&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05070c;--bg2:#090c16;--panel:#0d1019;--border:#16213a;
+  --text:#9aaccc;--dim:#2a3555;
+  --gold:#e8b84b;--gold2:#f7d98a;--gold-dim:#3a2e10;
+  --vermilion:#e84040;--jade:#2dcc8a;--ink:#c8d8f0;
+  --pink:#ff3d78;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --c-money:#e8b84b;--c-law:#9b6dff;--c-biz:#00c8e8;--c-food:#ff6020;
+  --c-restate:#38d870;--c-lang:#ff7700;--c-it:#00dcc0;--c-labor:#ff3d78;
+  --c-drive:#48b0f0;--c-medical:#f070a8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
+  font-family:'Noto Sans JP',sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none;}
+
+/* 和紙テクスチャ風ノイズ */
+body::before{content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;
+background:
+radial-gradient(ellipse 80% 50% at 50% -5%,#e8b84b0d 0%,transparent 55%),
+radial-gradient(ellipse 40% 60% at 5% 60%,#9b6dff07 0%,transparent 50%),
+radial-gradient(ellipse 35% 40% at 95% 85%,#00c8e806 0%,transparent 50%);
+}
+
+/* ===== ヘッダー ===== */
+.header{
+position:sticky;top:0;z-index:100;
+padding:14px 16px 10px;
+background:linear-gradient(180deg,#05070cff 60%,transparent);
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+border-bottom:1px solid #0f182e;
+}
+.logo{
+font-family:‘Zen Antique Soft’,serif;
+font-size:18px;letter-spacing:.18em;
+color:var(–gold);
+text-shadow:0 0 20px #e8b84b44,0 1px 0 #00000088;
+white-space:nowrap;
+}
+.logo em{font-style:normal;color:var(–jade);text-shadow:0 0 16px #2dcc8a44;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.xp-wrap{display:flex;align-items:center;gap:7px;}
+.xp-label{font-size:9px;color:var(–dim);letter-spacing:.1em;font-family:‘Zen Kaku Gothic New’,sans-serif;}
+.xp-bar{width:56px;height:3px;background:var(–border);border-radius:2px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(–gold),var(–gold2));border-radius:2px;
+transition:width .9s cubic-bezier(.34,1.4,.64,1);box-shadow:0 0 6px var(–gold);}
+.xp-text{font-size:11px;color:var(–gold2);white-space:nowrap;font-weight:700;}
+
+/* ===== タブ ===== */
+.tabs{
+display:flex;gap:0;
+border-bottom:1px solid var(–border);
+position:sticky;top:49px;z-index:99;
+background:var(–bg);
+overflow-x:auto;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+flex-shrink:0;padding:9px 13px;
+font-size:11px;font-weight:700;
+color:var(–dim);cursor:pointer;
+border-bottom:2px solid transparent;
+transition:all .2s;white-space:nowrap;
+font-family:‘Noto Sans JP’,sans-serif;
+letter-spacing:.02em;
+}
+.tab.active{color:var(–gold);border-bottom-color:var(–gold);}
+
+/* ===== パラメーター画面 ===== */
+.param-screen{display:none;padding:20px 14px 140px;position:relative;z-index:1;}
+.param-screen.active{display:block;}
+
+.param-title{text-align:center;margin-bottom:20px;}
+.param-title h2{
+font-family:‘Zen Antique Soft’,serif;
+font-size:15px;letter-spacing:.3em;
+color:var(–gold);text-shadow:0 0 16px #e8b84b44;
+}
+.param-title p{font-size:10px;color:var(–dim);margin-top:4px;letter-spacing:.06em;}
+
+.radar-wrap{display:flex;justify-content:center;margin-bottom:22px;}
+canvas#radar{display:block;}
+
+.param-bars{display:flex;flex-direction:column;gap:11px;}
+.pbar-row{display:flex;align-items:center;gap:10px;}
+.pbar-label{font-size:11px;font-weight:900;min-width:60px;letter-spacing:.02em;}
+.pbar-track{flex:1;height:6px;background:var(–border);border-radius:3px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.34,1.2,.64,1);}
+.pbar-val{font-size:10px;color:var(–dim);min-width:28px;text-align:right;font-weight:700;}
+
+.param-level{
+text-align:center;margin-top:24px;padding:18px 16px;
+background:linear-gradient(135deg,#0d1019,#101520);
+border:1px solid var(–gold-dim);border-radius:16px;
+position:relative;overflow:hidden;
+}
+.param-level::before{
+content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 80% 60% at 50% 0%,#e8b84b0a 0%,transparent 70%);
+pointer-events:none;
+}
+.level-label{font-size:9px;letter-spacing:.25em;color:var(–dim);margin-bottom:8px;font-weight:700;}
+.level-name{font-size:22px;font-weight:900;color:var(–gold);text-shadow:0 0 20px #e8b84b55;
+font-family:‘Zen Antique Soft’,serif;letter-spacing:.1em;}
+.level-desc{font-size:11px;color:#5a6a88;margin-top:8px;line-height:1.7;}
+
+/* 統計カード */
+.stat-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px;}
+.stat-card{
+background:var(–panel);border:1px solid var(–border);
+border-radius:12px;padding:12px 8px;text-align:center;
+}
+.stat-card-num{font-size:20px;font-weight:900;color:var(–gold);}
+.stat-card-label{font-size:9px;color:var(–dim);margin-top:3px;letter-spacing:.05em;}
+
+/* 勉強中バナー */
+.studying-banner{
+background:linear-gradient(135deg,#1a1200,#120e00);
+border:1px solid #3a2a00;border-radius:12px;
+padding:12px 14px;margin-bottom:20px;
+display:flex;align-items:center;gap:10px;
+}
+.studying-banner-dot{
+width:8px;height:8px;border-radius:50%;
+background:var(–gold);box-shadow:0 0 8px var(–gold);
+animation:studyPulse 1.5s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes studyPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+.studying-banner-text{font-size:11px;color:#a08040;line-height:1.6;}
+.studying-banner-text strong{color:var(–gold);font-weight:900;}
+
+/* ===== ツリー画面 ===== */
+.tree-screen{display:none;position:relative;z-index:1;padding-bottom:140px;}
+.tree-screen.active{display:block;}
+
+.sec-head{
+font-size:9px;letter-spacing:.22em;color:var(–dim);
+text-align:center;padding:20px 4px 12px;
+display:flex;align-items:center;gap:8px;justify-content:center;
+font-weight:700;
+}
+.sec-head::before,.sec-head::after{content:’’;flex:1;height:1px;
+background:linear-gradient(90deg,transparent,var(–border));max-width:50px;}
+.sec-head::after{background:linear-gradient(90deg,var(–border),transparent);}
+
+.tree-wrap{padding:0 10px;}
+.node-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:2px;}
+
+/* ===== ノード ===== */
+.sn{position:relative;width:56px;display:flex;flex-direction:column;
+align-items:center;cursor:pointer;touch-action:manipulation;gap:4px;
+overflow:visible;}
+.sn-circle{
+width:52px;height:52px;border-radius:50%;
+border:2px solid var(–border);
+background:var(–bg2);
+display:flex;align-items:center;justify-content:center;font-size:21px;
+position:relative;overflow:visible;
+transition:all .3s cubic-bezier(.34,1.2,.64,1);flex-shrink:0;
+}
+/* 光沢 */
+.sn-circle::before{content:’’;position:absolute;inset:0;border-radius:50%;
+background:linear-gradient(135deg,#ffffff0c 0%,transparent 55%);pointer-events:none;}
+/* タップリップル */
+.sn-circle::after{content:’’;position:absolute;inset:0;border-radius:50%;
+background:radial-gradient(circle,#ffffff1e 0%,transparent 70%);
+opacity:0;transition:opacity .2s;pointer-events:none;}
+.sn:active .sn-circle::after{opacity:1;}
+
+/* ロック */
+.sn.locked .sn-circle{border-color:#0e1520;background:#070c14;filter:grayscale(1);opacity:.38;}
+/* 解放可能 */
+.sn.available .sn-circle{
+border-color:#252e50;background:#0b1020;
+animation:availPulse 2.8s ease-in-out infinite;
+}
+@keyframes availPulse{
+0%,100%{border-color:#252e50;box-shadow:none;}
+50%{border-color:#353e68;box-shadow:0 0 12px #353e6840;}
+}
+/* 解放済み */
+.sn.unlocked .sn-circle{
+border-color:var(–nc,var(–gold));
+background:#0c1018;
+box-shadow:0 0 14px var(–ng,#e8b84b2a),inset 0 0 16px #e8b84b08;
+}
+/* 勉強中 */
+.sn.studying .sn-circle{
+border-color:var(–vermilion) !important;
+background:#180808 !important;
+box-shadow:0 0 14px #e8404030,inset 0 0 16px #e8404008 !important;
+animation:studyRing 2s ease-in-out infinite !important;
+}
+@keyframes studyRing{
+0%,100%{box-shadow:0 0 0 0 var(–vermilion),0 0 10px #e8404030;}
+50%{box-shadow:0 0 0 3px transparent,0 0 20px #e8404055;}
+}
+/* NOW PLAYING（現在進行中の最優先資格） */
+.sn.now-playing .sn-circle{animation:npRing 1.8s ease-in-out infinite;}
+@keyframes npRing{
+0%,100%{box-shadow:0 0 0 0 var(–nc,var(–gold)),0 0 12px var(–ng,#e8b84b33);}
+50%{box-shadow:0 0 0 4px transparent,0 0 24px var(–ng,#e8b84b55);}
+}
+@keyframes unlockBurst{
+0%{transform:scale(1);}
+25%{transform:scale(1.22);box-shadow:0 0 36px var(–nc,var(–gold)),0 0 72px var(–ng,#e8b84b66);}
+100%{transform:scale(1);}
+}
+.sn.just-unlocked .sn-circle{animation:unlockBurst .75s ease-out forwards;}
+
+/* 難易度バッジ（上中央・circle外に重なる） */
+.sn-diff{
+position:absolute;top:-8px;left:50%;
+transform:translateX(-50%);
+background:#05070c;border:1px solid #2a3555;
+border-radius:10px;padding:2px 5px;
+font-size:7px;line-height:1.4;
+color:#e8b84b;letter-spacing:.5px;
+white-space:nowrap;z-index:10;
+transition:opacity .3s;
+text-align:center;
+}
+.sn.locked .sn-diff{opacity:.3;}
+
+/* バッジ（右下） */
+.sn-badge{
+position:absolute;bottom:-1px;right:-1px;
+width:17px;height:17px;border-radius:50%;
+background:var(–bg);border:1.5px solid var(–border);
+display:flex;align-items:center;justify-content:center;
+font-size:8px;transition:all .3s;
+}
+.sn.unlocked .sn-badge{background:#0c1018;border-color:var(–nc,var(–gold));color:var(–gold);}
+.sn.studying .sn-badge{background:#180808;border-color:var(–vermilion);color:var(–vermilion);}
+
+/* ラベル（タップで表示） */
+.sn-label{
+font-size:8px;font-weight:700;color:var(–dim);
+letter-spacing:.02em;text-align:center;line-height:1.25;
+max-width:60px;min-height:20px;
+opacity:1;
+transition:color .3s;
+pointer-events:none;
+}
+.sn.unlocked .sn-label{color:var(–nc,var(–gold));}
+.sn.studying .sn-label{color:var(–vermilion);}
+.sn.available .sn-label{color:#404e78;}
+.sn.locked .sn-label{color:#1e2840;}
+
+/* コネクター */
+.conn-v{width:2px;border-radius:1px;background:var(–border);transition:background .5s,box-shadow .5s;}
+.conn-v.lit{background:var(–gold);box-shadow:0 0 6px #e8b84b55;}
+/* FP分岐用インラインdivへのlit対応 */
+#cv-fp2-afp.lit,#ch-fp2-l.lit{background:var(–gold) !important;box-shadow:0 0 5px #e8b84b55;}
+.conn-h{height:2px;flex:1;min-width:8px;border-radius:1px;background:var(–border);
+transition:background .5s,box-shadow .5s;}
+.conn-h.lit{background:var(–gold);box-shadow:0 0 5px #e8b84b55;}
+.v-row{display:flex;justify-content:center;}
+.v-row .conn-v{height:28px;}
+.branch-row{display:flex;align-items:flex-end;height:28px;}
+
+/* パーティクル */
+.particle{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;
+animation:pfly var(–dur,.65s) ease-out forwards;}
+@keyframes pfly{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(–dx),var(–dy)) scale(0);opacity:0;}}
+
+/* ===== ボトムシート ===== */
+.overlay{position:fixed;inset:0;z-index:200;background:#000000a0;opacity:0;pointer-events:none;
+transition:opacity .28s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{
+position:fixed;left:0;right:0;bottom:0;z-index:201;
+background:linear-gradient(180deg,#0e1120 0%,#0a0d18 100%);
+border-top:1px solid var(–border);
+border-radius:22px 22px 0 0;
+padding:0 0 calc(16px + var(–safe-bottom));
+transform:translateY(100%);
+transition:transform .4s cubic-bezier(.34,1.05,.64,1);
+max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
+}
+.sheet.open{transform:translateY(0);}
+.sheet-handle{width:32px;height:4px;background:#1a2238;border-radius:2px;margin:12px auto 0;}
+
+.sh-head{
+display:flex;align-items:center;gap:12px;padding:14px 18px 12px;
+border-bottom:1px solid var(–border);
+position:sticky;top:0;
+background:linear-gradient(180deg,#0e1120 80%,transparent);
+z-index:1;
+}
+.sh-icon{font-size:28px;flex-shrink:0;}
+.sh-titles{flex:1;min-width:0;}
+.sh-name{font-size:17px;font-weight:900;line-height:1.2;
+font-family:‘Zen Kaku Gothic New’,sans-serif;letter-spacing:.02em;}
+.sh-diff{font-size:10px;color:var(–dim);margin-top:2px;letter-spacing:.05em;}
+.sh-genre{
+display:inline-flex;align-items:center;gap:3px;
+background:#0a0e1a;border:1px solid var(–border);
+border-radius:20px;padding:4px 10px;font-size:9px;
+font-weight:700;flex-shrink:0;letter-spacing:.04em;
+}
+
+.sh-body{padding:14px 18px;}
+
+/* ステータスバッジ（シートの上部） */
+.sh-status-bar{
+display:flex;align-items:center;justify-content:center;gap:8px;
+margin-bottom:14px;
+}
+.sh-status{
+display:flex;align-items:center;gap:5px;
+border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;
+border:1px solid;cursor:pointer;transition:all .2s;
+-webkit-tap-highlight-color:transparent;
+}
+.sh-status.status-done{border-color:var(–jade);color:var(–jade);background:#001810;}
+.sh-status.status-studying{border-color:var(–vermilion);color:var(–vermilion);background:#180808;}
+.sh-status.status-locked{border-color:var(–dim);color:var(–dim);background:transparent;}
+.sh-status:active{opacity:.7;}
+
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
+.mc{background:#090c16;border:1px solid var(–border);border-radius:10px;padding:9px 11px;}
+.mc-l{font-size:8px;color:var(–dim);letter-spacing:.15em;margin-bottom:3px;font-weight:700;}
+.mc-v{font-size:11px;font-weight:700;color:#5a7090;}
+
+.ss-title{font-size:9px;letter-spacing:.18em;color:var(–dim);margin-bottom:7px;font-weight:700;}
+.ss-body{font-size:12px;line-height:1.85;color:#6878a0;margin-bottom:14px;}
+
+.sh-link{display:flex;align-items:center;gap:8px;background:#090c16;border:1px solid var(–border);
+border-radius:9px;padding:10px 12px;text-decoration:none;color:var(–c-biz);font-size:11px;
+margin-bottom:7px;font-weight:700;}
+.sh-link:active{background:#081420;}
+
+.param-contrib{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.pc-badge{display:flex;align-items:center;gap:4px;background:#090c16;border:1px solid;
+border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;}
+
+/* アクションボタン */
+.sh-btn{
+margin:6px 18px 0;width:calc(100% - 36px);
+padding:15px;border-radius:14px;
+border:2px solid var(–sc,var(–gold));
+background:transparent;color:var(–sc,var(–gold));
+font-size:13px;font-weight:900;
+font-family:‘Noto Sans JP’,sans-serif;letter-spacing:.06em;
+cursor:pointer;transition:all .2s;
+text-shadow:0 0 12px var(–sc,var(–gold));
+-webkit-tap-highlight-color:transparent;display:block;
+}
+.sh-btn:active{background:var(–sc,var(–gold));color:#05070c;text-shadow:none;
+box-shadow:0 0 28px var(–sc,var(–gold));}
+.sh-btn.locked-btn{border-color:#16213a;color:#252e48;text-shadow:none;cursor:default;}
+.sh-btn.done-btn{border-color:var(–jade);color:var(–jade);text-shadow:0 0 10px var(–jade);}
+.sh-btn.done-btn:active{background:var(–jade);color:#05070c;text-shadow:none;}
+
+/* トースト */
+.toast{
+position:fixed;bottom:72px;left:50%;
+transform:translateX(-50%) translateY(12px);
+background:#0e1120;border:1px solid var(–gold);
+border-radius:24px;padding:10px 22px;
+font-size:12px;font-weight:700;color:var(–gold);
+box-shadow:0 0 24px #e8b84b40;
+opacity:0;pointer-events:none;z-index:9999;
+transition:all .34s cubic-bezier(.34,1.4,.64,1);
+white-space:nowrap;max-width:88vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ===== タグバッジ ===== */
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.tag{
+display:inline-flex;align-items:center;gap:3px;
+border-radius:20px;padding:4px 10px;
+font-size:9px;font-weight:700;letter-spacing:.04em;
+border:1px solid;
+}
+/* 資格種別 */
+.tag-国家  {color:#e8b84b;border-color:#e8b84b55;background:#1a1400;}
+.tag-民間  {color:#00dcc0;border-color:#00dcc055;background:#001a18;}
+.tag-公的  {color:#9b6dff;border-color:#9b6dff55;background:#100a1a;}
+.tag-運転免許{color:#48b0f0;border-color:#48b0f055;background:#001018;}
+.tag-技能講習{color:#80d080;border-color:#80d08055;background:#061006;}
+/* 勉強方法 */
+.tag-独学OK    {color:#2dcc8a;border-color:#2dcc8a55;background:#001810;}
+.tag-学校必須  {color:#f070a8;border-color:#f070a855;background:#1a0010;}
+.tag-実務経験必要{color:#ff7700;border-color:#ff770055;background:#1a0e00;}
+.tag-講習のみ  {color:#48b0f0;border-color:#48b0f055;background:#001018;}
+/* 試験日程 */
+.tag-CBT随時{color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-年1回  {color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-年2回  {color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-年3回  {color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-年数回 {color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-随時   {color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-卒業時取得{color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+.tag-講習受講{color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
+</style>
+
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">資格<em>スキルツリー</em></div>
+  <div class="header-right">
+    <div class="xp-wrap">
+      <div class="xp-label">解放</div>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <div class="xp-text" id="xpText">0/0</div>
+    </div>
+  </div>
+</header>
+
+<!-- タブ -->
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('param')">📊 ステータス</div>
+  <div class="tab" onclick="switchTab('money')">💰 マネー・FP</div>
+  <div class="tab" onclick="switchTab('law')">⚖️ 法律</div>
+  <div class="tab" onclick="switchTab('food')">🍱 食品・調理</div>
+  <div class="tab" onclick="switchTab('lang')">🌐 語学</div>
+  <div class="tab" onclick="switchTab('it')">💻 IT</div>
+  <div class="tab" onclick="switchTab('drive')">🚗 運転・乗り物</div>
+  <div class="tab" onclick="switchTab('medical')">🏥 医療・福祉</div>
+  <div class="tab" onclick="switchTab('arch')">🏗️ 建築・土木</div>
+  <div class="tab" onclick="switchTab('design')">🎨 デザイン・美容</div>
+</div>
+
+<!-- ===== パラメーター画面 ===== -->
+
+<div class="param-screen active" id="screen-param">
+  <div class="param-title">
+    <h2>ステータス</h2>
+    <p>資格を解放・勉強中にするとパラメーターが育つ</p>
+  </div>
+  <div class="studying-banner" id="studyingBanner" style="display:none">
+    <div class="studying-banner-dot"></div>
+    <div class="studying-banner-text"><strong id="studyingNames"></strong> を勉強中</div>
+  </div>
+  <div class="radar-wrap"><canvas id="radar" width="280" height="280"></canvas></div>
+  <div class="param-bars" id="paramBars"></div>
+  <div class="stat-cards" id="statCards"></div>
+  <div class="param-level" id="paramLevel">
+    <div class="level-label">総合ランク</div>
+    <div class="level-name" id="levelName">見習い</div>
+    <div class="level-desc" id="levelDesc">最初の一歩。資格を解放してステータスを育てよう。</div>
+  </div>
+</div>
+
+<!-- ===== マネー・FP ===== -->
+
+<div class="tree-screen" id="screen-money">
+<div class="tree-wrap">
+
+  <div class="sec-head">FP技能士</div>
+  <!-- FP3→FP2→FP1（縦一列）とAFP→CFP（右横・線なし） -->
+  <div style="display:flex;justify-content:center;align-items:flex-start;gap:20px;">
+    <!-- 左列: FP3→FP2→FP1 -->
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="sn available" id="n-fp3" style="--nc:var(--c-money);--ng:#e8b84b40" onclick="tap('fp3')">
+        <div class="sn-circle">💰<div class="sn-badge">✦</div></div><div class="sn-label">FP 3級</div></div>
+      <div class="conn-v" id="cv-fp3-fp2" style="height:22px;"></div>
+      <div class="sn locked" id="n-fp2" style="--nc:#d4c000;--ng:#d4c00040" onclick="tap('fp2')">
+        <div class="sn-circle">💰<div class="sn-badge">🔒</div></div><div class="sn-label">FP 2級</div></div>
+      <div class="conn-v" id="cv-fp2-fp1" style="height:22px;"></div>
+      <div class="sn locked" id="n-fp1" style="--nc:#ffaa00;--ng:#ffaa0040" onclick="tap('fp1')">
+        <div class="sn-circle">💰<div class="sn-badge">🔒</div></div><div class="sn-label">FP 1級</div></div>
+    </div>
+    <!-- 右列: AFP→CFP（線なし・独立） -->
+    <div style="display:flex;flex-direction:column;align-items:center;padding-top:calc(52px + 4px + 20px + 22px);">
+      <div class="sn locked" id="n-afp" style="--nc:var(--c-money);--ng:#e8b84b40" onclick="tap('afp')">
+        <div class="sn-circle">🏅<div class="sn-badge">🔒</div></div><div class="sn-label">AFP</div></div>
+      <div class="conn-v" id="cv-afp-cfp" style="height:22px;"></div>
+      <div class="sn locked" id="n-cfp" style="--nc:#ff8030;--ng:#ff803040" onclick="tap('cfp')">
+        <div class="sn-circle">🎖️<div class="sn-badge">🔒</div></div><div class="sn-label">CFP</div></div>
+    </div>
+  </div>
+
+  <div class="sec-head">投資・不動産</div>
+  <div class="node-row">
+    <div class="sn available" id="n-shoken" style="--nc:var(--c-biz);--ng:#00c8e840" onclick="tap('shoken')">
+      <div class="sn-circle">📈<div class="sn-badge">✦</div></div><div class="sn-label">証券外務員</div></div>
+    <div class="sn available" id="n-takken" style="--nc:var(--c-restate);--ng:#38d87040" onclick="tap('takken')">
+      <div class="sn-circle">🏠<div class="sn-badge">✦</div></div><div class="sn-label">宅建</div></div>
+  </div>
+
+  <div class="sec-head">簿記・会計</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-boki3" style="--nc:var(--c-biz);--ng:#00c8e840" onclick="tap('boki3')">
+        <div class="sn-circle">📊<div class="sn-badge">✦</div></div><div class="sn-label">簿記 3級</div></div>
+      <div class="conn-v" id="cv-boki3-2" style="height:22px;"></div>
+      <div class="sn locked" id="n-boki2" style="--nc:#00b0d0;--ng:#00b0d040" onclick="tap('boki2')">
+        <div class="sn-circle">📊<div class="sn-badge">🔒</div></div><div class="sn-label">簿記 2級</div></div>
+      <div class="conn-v" id="cv-boki2-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-boki1" style="--nc:#00d0f0;--ng:#00d0f040" onclick="tap('boki1')">
+        <div class="sn-circle">📊<div class="sn-badge">🔒</div></div><div class="sn-label">簿記 1級</div></div>
+    </div>
+    <div class="sn available" id="n-zeirishi" style="--nc:#ffcc00;--ng:#ffcc0040" onclick="tap('zeirishi')">
+      <div class="sn-circle">🧾<div class="sn-badge">✦</div></div><div class="sn-label">税理士</div></div>
+    <div class="sn available" id="n-kaikei" style="--nc:#ffcc00;--ng:#ffcc0040" onclick="tap('kaikei')">
+      <div class="sn-circle">🏦<div class="sn-badge">✦</div></div><div class="sn-label">公認会計士</div></div>
+    <div class="sn available" id="n-cma" style="--nc:#ffcc00;--ng:#ffcc0040" onclick="tap('cma')">
+      <div class="sn-circle">📉<div class="sn-badge">✦</div></div><div class="sn-label">中小企業診断士</div></div>
+  </div>
+
+  <div class="sec-head">労務・社会保険</div>
+  <div class="node-row">
+    <div class="sn available" id="n-sharoshi" style="--nc:var(--c-labor);--ng:#ff3d7840" onclick="tap('sharoshi')">
+      <div class="sn-circle">👔<div class="sn-badge">✦</div></div><div class="sn-label">社労士</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 法律 ===== -->
+
+<div class="tree-screen" id="screen-law">
+<div class="tree-wrap">
+  <div class="sec-head">法律</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-gyosei" style="--nc:var(--c-law);--ng:#a875ff40" onclick="tap('gyosei')">
+      <div class="sn-circle">📜<div class="sn-badge">🔒</div></div><div class="sn-label">行政書士</div></div>
+    <div class="sn locked" id="n-shihosho" style="--nc:var(--c-law);--ng:#a875ff40" onclick="tap('shihosho')">
+      <div class="sn-circle">⚖️<div class="sn-badge">🔒</div></div><div class="sn-label">司法書士</div></div>
+    <div class="sn locked" id="n-benrishi" style="--nc:#c0a0ff;--ng:#c0a0ff40" onclick="tap('benrishi')">
+      <div class="sn-circle">💡<div class="sn-badge">🔒</div></div><div class="sn-label">弁理士</div></div>
+    <div class="sn locked" id="n-bengo" style="--nc:#d0b0ff;--ng:#d0b0ff40" onclick="tap('bengo')">
+      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">弁護士</div></div>
+  </div>
+  <div class="sec-head">公務員</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-koumuin1" style="--nc:var(--c-law);--ng:#a875ff40" onclick="tap('koumuin1')">
+      <div class="sn-circle">🏢<div class="sn-badge">🔒</div></div><div class="sn-label">公務員 一般職</div></div>
+    <div class="sn locked" id="n-koumuin2" style="--nc:#b890ff;--ng:#b890ff40" onclick="tap('koumuin2')">
+      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">公務員 総合職</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 食品・調理 ===== -->
+
+<div class="tree-screen" id="screen-food">
+<div class="tree-wrap">
+  <div class="sec-head">食品・栄養</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-eiyoshi" style="--nc:var(--c-food);--ng:#ff6b3540" onclick="tap('eiyoshi')">
+      <div class="sn-circle">🥗<div class="sn-badge">🔒</div></div><div class="sn-label">栄養士</div></div>
+    <div class="sn locked" id="n-kanrieiyoshi" style="--nc:#ff8855;--ng:#ff885540" onclick="tap('kanrieiyoshi')">
+      <div class="sn-circle">🥗<div class="sn-badge">🔒</div></div><div class="sn-label">管理栄養士</div></div>
+  </div>
+  <div class="sec-head">調理師免許</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-chori" style="--nc:var(--c-food);--ng:#ff6b3540" onclick="tap('chori')">
+      <div class="sn-circle">🍳<div class="sn-badge">🔒</div></div><div class="sn-label">調理師</div></div>
+    <div class="sn locked" id="n-seika" style="--nc:#ff8855;--ng:#ff885540" onclick="tap('seika')">
+      <div class="sn-circle">🎂<div class="sn-badge">🔒</div></div><div class="sn-label">製菓衛生師</div></div>
+    <div class="sn locked" id="n-sommelier" style="--nc:#cc88ff;--ng:#cc88ff40" onclick="tap('sommelier')">
+      <div class="sn-circle">🍷<div class="sn-badge">🔒</div></div><div class="sn-label">ソムリエ</div></div>
+    <div class="sn locked" id="n-barista" style="--nc:#c08040;--ng:#c0804040" onclick="tap('barista')">
+      <div class="sn-circle">☕<div class="sn-badge">🔒</div></div><div class="sn-label">バリスタ</div></div>
+  </div>
+  <div class="sec-head">食品衛生</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-shokuhin" style="--nc:var(--c-food);--ng:#ff6b3540" onclick="tap('shokuhin')">
+      <div class="sn-circle">🧫<div class="sn-badge">🔒</div></div><div class="sn-label">食品衛生責任者</div></div>
+    <div class="sn locked" id="n-haccp" style="--nc:#ff8855;--ng:#ff885540" onclick="tap('haccp')">
+      <div class="sn-circle">🔬<div class="sn-badge">🔒</div></div><div class="sn-label">HACCP管理者</div></div>
+    <div class="sn locked" id="n-sake" style="--nc:#ffe0a0;--ng:#ffe0a040" onclick="tap('sake')">
+      <div class="sn-circle">🍶<div class="sn-badge">🔒</div></div><div class="sn-label">唎酒師</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 語学 ===== -->
+
+<div class="tree-screen" id="screen-lang">
+<div class="tree-wrap">
+  <div class="sec-head">英語</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-toeic600" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('toeic600')">
+        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 600</div></div>
+      <div class="conn-v" id="cv-t600-800" style="height:22px;"></div>
+      <div class="sn locked" id="n-toeic800" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('toeic800')">
+        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 800</div></div>
+      <div class="conn-v" id="cv-t800-900" style="height:22px;"></div>
+      <div class="sn locked" id="n-toeic900" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('toeic900')">
+        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 900+</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-eiken2" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('eiken2')">
+        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 2級</div></div>
+      <div class="conn-v" id="cv-e2-pre1" style="height:22px;"></div>
+      <div class="sn locked" id="n-eikenPre1" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('eikenPre1')">
+        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 準1級</div></div>
+      <div class="conn-v" id="cv-pre1-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-eiken1" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('eiken1')">
+        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 1級</div></div>
+    </div>
+  </div>
+  <div class="sec-head">中国語</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-hsk3" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('hsk3')">
+        <div class="sn-circle">🀄<div class="sn-badge">🔒</div></div><div class="sn-label">HSK 3級</div></div>
+      <div class="conn-v" id="cv-hsk3-5" style="height:22px;"></div>
+      <div class="sn locked" id="n-hsk5" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('hsk5')">
+        <div class="sn-circle">🀄<div class="sn-badge">🔒</div></div><div class="sn-label">HSK 5級</div></div>
+    </div>
+  </div>
+  <div class="sec-head">その他の語学</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-korean3" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('korean3')">
+      <div class="sn-circle">🇰🇷<div class="sn-badge">🔒</div></div><div class="sn-label">韓国語 3級</div></div>
+    <div class="sn locked" id="n-french" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('french')">
+      <div class="sn-circle">🇫🇷<div class="sn-badge">🔒</div></div><div class="sn-label">仏検 3級</div></div>
+    <div class="sn locked" id="n-spanish" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('spanish')">
+      <div class="sn-circle">🇪🇸<div class="sn-badge">🔒</div></div><div class="sn-label">西検 3級</div></div>
+  </div>
+
+  <div class="sec-head">漢字検定</div>
+  <div class="node-row">
+    <div class="sn available" id="n-kanji3" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanji3')">
+      <div class="sn-circle">📚<div class="sn-badge">✦</div></div><div class="sn-label">漢検 3級</div></div>
+    <div class="sn locked" id="n-kanjiPre2" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanjiPre2')">
+      <div class="sn-circle">📚<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 準2級</div></div>
+    <div class="sn locked" id="n-kanji2" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanji2')">
+      <div class="sn-circle">📚<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 2級</div></div>
+  </div>
+  <div class="node-row">
+    <div class="sn locked" id="n-kanjiPre1" style="--nc:#e8b84b;--ng:#e8b84b40" onclick="tap('kanjiPre1')">
+      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 準1級</div></div>
+    <div class="sn locked" id="n-kanji1" style="--nc:#ffcc00;--ng:#ffcc0040" onclick="tap('kanji1')">
+      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 1級</div></div>
+  </div>
+</div></div>
+
+<!-- ===== IT ===== -->
+
+<div class="tree-screen" id="screen-it">
+<div class="tree-wrap">
+  <div class="sec-head">国家IT資格</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-itpass" style="--nc:var(--c-it);--ng:#00e5cc40" onclick="tap('itpass')">
+        <div class="sn-circle">💻<div class="sn-badge">🔒</div></div><div class="sn-label">ITパスポート</div></div>
+      <div class="conn-v" id="cv-itp-fg" style="height:22px;"></div>
+      <div class="sn locked" id="n-fg" style="--nc:#00c8b0;--ng:#00c8b040" onclick="tap('fg')">
+        <div class="sn-circle">💻<div class="sn-badge">🔒</div></div><div class="sn-label">基本情報技術者</div></div>
+      <div class="conn-v" id="cv-fg-ap" style="height:22px;"></div>
+      <div class="sn locked" id="n-ap" style="--nc:#00a896;--ng:#00a89640" onclick="tap('ap')">
+        <div class="sn-circle">💻<div class="sn-badge">🔒</div></div><div class="sn-label">応用情報技術者</div></div>
+    </div>
+  </div>
+  <div class="sec-head">クラウド</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-awsccp" style="--nc:var(--c-it);--ng:#00e5cc40" onclick="tap('awsccp')">
+        <div class="sn-circle">☁️<div class="sn-badge">🔒</div></div><div class="sn-label">AWS CCP</div></div>
+      <div class="conn-v" id="cv-ccp-saa" style="height:22px;"></div>
+      <div class="sn locked" id="n-awssaa" style="--nc:#00c8b0;--ng:#00c8b040" onclick="tap('awssaa')">
+        <div class="sn-circle">☁️<div class="sn-badge">🔒</div></div><div class="sn-label">AWS SAA</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-gcp" style="--nc:var(--c-it);--ng:#00e5cc40" onclick="tap('gcp')">
+        <div class="sn-circle">☁️<div class="sn-badge">🔒</div></div><div class="sn-label">GCP ACE</div></div>
+    </div>
+  </div>
+  <div class="sec-head">セキュリティ・データ</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-security" style="--nc:var(--c-it);--ng:#00e5cc40" onclick="tap('security')">
+      <div class="sn-circle">🔐<div class="sn-badge">🔒</div></div><div class="sn-label">情報セキュリティ</div></div>
+    <div class="sn locked" id="n-gaiq" style="--nc:#00c8b0;--ng:#00c8b040" onclick="tap('gaiq')">
+      <div class="sn-circle">📉<div class="sn-badge">🔒</div></div><div class="sn-label">GA4認定</div></div>
+    <div class="sn locked" id="n-oracle" style="--nc:#00a896;--ng:#00a89640" onclick="tap('oracle')">
+      <div class="sn-circle">🗄️<div class="sn-badge">🔒</div></div><div class="sn-label">Oracle DB</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 運転・乗り物 ===== -->
+
+<div class="tree-screen" id="screen-drive">
+<div class="tree-wrap">
+  <div class="sec-head">自動車免許</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-futsuu" style="--nc:var(--c-drive);--ng:#60c0ff40" onclick="tap('futsuu')">
+        <div class="sn-circle">🚗<div class="sn-badge">🔒</div></div><div class="sn-label">普通免許</div></div>
+      <div class="conn-v" id="cv-fu-chu" style="height:22px;"></div>
+      <div class="sn locked" id="n-chugata" style="--nc:#40aaee;--ng:#40aaee40" onclick="tap('chugata')">
+        <div class="sn-circle">🚐<div class="sn-badge">🔒</div></div><div class="sn-label">中型免許</div></div>
+      <div class="conn-v" id="cv-chu-ok" style="height:22px;"></div>
+      <div class="sn locked" id="n-okugata" style="--nc:#2090cc;--ng:#2090cc40" onclick="tap('okugata')">
+        <div class="sn-circle">🚚<div class="sn-badge">🔒</div></div><div class="sn-label">大型免許</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn locked" id="n-nirin" style="--nc:var(--c-drive);--ng:#60c0ff40" onclick="tap('nirin')">
+        <div class="sn-circle">🏍️<div class="sn-badge">🔒</div></div><div class="sn-label">二輪 普通</div></div>
+      <div class="conn-v" id="cv-ni-ok" style="height:22px;"></div>
+      <div class="sn locked" id="n-nirin_ok" style="--nc:#40aaee;--ng:#40aaee40" onclick="tap('nirin_ok')">
+        <div class="sn-circle">🏍️<div class="sn-badge">🔒</div></div><div class="sn-label">二輪 大型</div></div>
+    </div>
+    <div class="sn locked" id="n-taxi" style="--nc:var(--c-drive);--ng:#60c0ff40" onclick="tap('taxi')">
+      <div class="sn-circle">🚕<div class="sn-badge">🔒</div></div><div class="sn-label">二種免許</div></div>
+  </div>
+  <div class="sec-head">その他の乗り物</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-forklit" style="--nc:var(--c-drive);--ng:#60c0ff40" onclick="tap('forklit')">
+      <div class="sn-circle">🏗️<div class="sn-badge">🔒</div></div><div class="sn-label">フォークリフト</div></div>
+    <div class="sn locked" id="n-crane" style="--nc:#40aaee;--ng:#40aaee40" onclick="tap('crane')">
+      <div class="sn-circle">🏗️<div class="sn-badge">🔒</div></div><div class="sn-label">クレーン</div></div>
+    <div class="sn locked" id="n-yacht" style="--nc:#60d0ff;--ng:#60d0ff40" onclick="tap('yacht')">
+      <div class="sn-circle">⛵<div class="sn-badge">🔒</div></div><div class="sn-label">小型船舶</div></div>
+    <div class="sn locked" id="n-pilot" style="--nc:#a0d8ff;--ng:#a0d8ff40" onclick="tap('pilot')">
+      <div class="sn-circle">✈️<div class="sn-badge">🔒</div></div><div class="sn-label">自家用操縦士</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 医療・福祉 ===== -->
+
+<div class="tree-screen" id="screen-medical">
+<div class="tree-wrap">
+  <div class="sec-head">医療</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-kango" style="--nc:var(--c-medical);--ng:#ff80b040" onclick="tap('kango')">
+      <div class="sn-circle">💊<div class="sn-badge">🔒</div></div><div class="sn-label">看護師</div></div>
+    <div class="sn locked" id="n-yakuzai" style="--nc:#ff90c0;--ng:#ff90c040" onclick="tap('yakuzai')">
+      <div class="sn-circle">💉<div class="sn-badge">🔒</div></div><div class="sn-label">薬剤師</div></div>
+    <div class="sn locked" id="n-ishi" style="--nc:#ffa0d0;--ng:#ffa0d040" onclick="tap('ishi')">
+      <div class="sn-circle">🩺<div class="sn-badge">🔒</div></div><div class="sn-label">医師</div></div>
+  </div>
+  <div class="sec-head">福祉・介護</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-kaigo2" style="--nc:var(--c-medical);--ng:#ff80b040" onclick="tap('kaigo2')">
+      <div class="sn-circle">🤝<div class="sn-badge">🔒</div></div><div class="sn-label">介護職員 初任者</div></div>
+    <div class="sn locked" id="n-kaigo" style="--nc:#ff90c0;--ng:#ff90c040" onclick="tap('kaigo')">
+      <div class="sn-circle">🫂<div class="sn-badge">🔒</div></div><div class="sn-label">介護福祉士</div></div>
+    <div class="sn locked" id="n-sw" style="--nc:#ffa0d0;--ng:#ffa0d040" onclick="tap('sw')">
+      <div class="sn-circle">🌱<div class="sn-badge">🔒</div></div><div class="sn-label">社会福祉士</div></div>
+  </div>
+  <div class="sec-head">フィットネス・美容</div>
+  <div class="node-row">
+    <div class="sn locked" id="n-trainer" style="--nc:var(--c-medical);--ng:#ff80b040" onclick="tap('trainer')">
+      <div class="sn-circle">💪<div class="sn-badge">🔒</div></div><div class="sn-label">NSCA-CPT</div></div>
+    <div class="sn locked" id="n-beauty" style="--nc:#ff90c0;--ng:#ff90c040" onclick="tap('beauty')">
+      <div class="sn-circle">💄<div class="sn-badge">🔒</div></div><div class="sn-label">美容師</div></div>
+    <div class="sn locked" id="n-massage" style="--nc:#ffa0d0;--ng:#ffa0d040" onclick="tap('massage')">
+      <div class="sn-circle">🖐️<div class="sn-badge">🔒</div></div><div class="sn-label">あん摩マッサージ</div></div>
+  </div>
+</div></div>
+
+<!-- ===== 建築・土木 ===== -->
+
+<div class="tree-screen" id="screen-arch">
+<div class="tree-wrap">
+
+  <div class="sec-head">建築士</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-kenchiku2" style="--nc:#b0c060;--ng:#b0c06040" onclick="tap('kenchiku2')">
+        <div class="sn-circle">🏛️<div class="sn-badge">✦</div></div><div class="sn-label">二級建築士</div></div>
+      <div class="conn-v" id="cv-k2-k1" style="height:22px;"></div>
+      <div class="sn locked" id="n-kenchiku1" style="--nc:#d0e080;--ng:#d0e08040" onclick="tap('kenchiku1')">
+        <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">一級建築士</div></div>
+      <div class="conn-v" id="cv-k1-kk" style="height:22px;"></div>
+      <div style="display:flex;gap:8px;">
+        <div class="sn locked" id="n-kanri" style="--nc:#e8f0a0;--ng:#e8f0a040" onclick="tap('kanri')">
+          <div class="sn-circle">🏆<div class="sn-badge">🔒</div></div><div class="sn-label">構造設計一級建築士</div></div>
+        <div class="sn locked" id="n-setsubi1k" style="--nc:#60c8a0;--ng:#60c8a040" onclick="tap('setsubi1k')">
+          <div class="sn-circle">⚙️<div class="sn-badge">🔒</div></div><div class="sn-label">設備設計一級建築士</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-mokuzou" style="--nc:#c0a050;--ng:#c0a05040" onclick="tap('mokuzou')">
+        <div class="sn-circle">🪵<div class="sn-badge">✦</div></div><div class="sn-label">木造建築士</div></div>
+    </div>
+  </div>
+
+  <div class="sec-head">施工管理</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-kenkan2" style="--nc:#b0c060;--ng:#b0c06040" onclick="tap('kenkan2')">
+        <div class="sn-circle">🦺<div class="sn-badge">✦</div></div><div class="sn-label">建築施工管理 2級</div></div>
+      <div class="conn-v" id="cv-kk2-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-kenkan1" style="--nc:#d0e080;--ng:#d0e08040" onclick="tap('kenkan1')">
+        <div class="sn-circle">🦺<div class="sn-badge">🔒</div></div><div class="sn-label">建築施工管理 1級</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-doboku2" style="--nc:#90b040;--ng:#90b04040" onclick="tap('doboku2')">
+        <div class="sn-circle">🏗️<div class="sn-badge">✦</div></div><div class="sn-label">土木施工管理 2級</div></div>
+      <div class="conn-v" id="cv-dk2-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-doboku1" style="--nc:#b0d060;--ng:#b0d06040" onclick="tap('doboku1')">
+        <div class="sn-circle">🏗️<div class="sn-badge">🔒</div></div><div class="sn-label">土木施工管理 1級</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-setsubi2" style="--nc:#80c090;--ng:#80c09040" onclick="tap('setsubi2')">
+        <div class="sn-circle">⚙️<div class="sn-badge">✦</div></div><div class="sn-label">管工事施工管理 2級</div></div>
+      <div class="conn-v" id="cv-se2-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-setsubi1" style="--nc:#a0d8b0;--ng:#a0d8b040" onclick="tap('setsubi1')">
+        <div class="sn-circle">⚙️<div class="sn-badge">🔒</div></div><div class="sn-label">管工事施工管理 1級</div></div>
+    </div>
+  </div>
+
+  <div class="sec-head">設備・電気</div>
+  <div class="node-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-denki2" style="--nc:#b0c060;--ng:#b0c06040" onclick="tap('denki2')">
+        <div class="sn-circle">⚡<div class="sn-badge">✦</div></div><div class="sn-label">電気工事士 2種</div></div>
+      <div class="conn-v" id="cv-de2-1" style="height:22px;"></div>
+      <div class="sn locked" id="n-denki1" style="--nc:#d0e080;--ng:#d0e08040" onclick="tap('denki1')">
+        <div class="sn-circle">⚡<div class="sn-badge">🔒</div></div><div class="sn-label">電気工事士 1種</div></div>
+    </div>
+    <div class="sn available" id="n-kanrishi" style="--nc:#80c090;--ng:#80c09040" onclick="tap('kanrishi')">
+      <div class="sn-circle">🔧<div class="sn-badge">✦</div></div><div class="sn-label">建築設備士</div></div>
+    <div class="sn available" id="n-shobo" style="--nc:#ff8040;--ng:#ff804040" onclick="tap('shobo')">
+      <div class="sn-circle">🚒<div class="sn-badge">✦</div></div><div class="sn-label">消防設備士</div></div>
+  </div>
+
+  <div class="sec-head">不動産・鑑定</div>
+  <div class="node-row">
+    <div class="sn available" id="n-kantei" style="--nc:#b0c060;--ng:#b0c06040" onclick="tap('kantei')">
+      <div class="sn-circle">🔍<div class="sn-badge">✦</div></div><div class="sn-label">不動産鑑定士</div></div>
+    <div class="sn available" id="n-kanteishi" style="--nc:#c0a050;--ng:#c0a05040" onclick="tap('kanteishi')">
+      <div class="sn-circle">📐<div class="sn-badge">✦</div></div><div class="sn-label">土地家屋調査士</div></div>
+    <div class="sn available" id="n-urban" style="--nc:#90b040;--ng:#90b04040" onclick="tap('urban')">
+      <div class="sn-circle">🏙️<div class="sn-badge">✦</div></div><div class="sn-label">都市計画士</div></div>
+  </div>
+</div></div>
+
+<!-- ===== デザイン・美容 ===== -->
+
+<div class="param-screen" id="screen-design">
+<div class="tree-wrap">
+
+  <div class="sec-head">色彩・カラー</div>
+  <div class="node-row">
+    <div class="sn available" id="n-color-uc" style="--nc:#ff90c0;--ng:#ff90c040" onclick="tap('color-uc')">
+      <div class="sn-circle">🎨<div class="sn-badge">✦</div></div><div class="sn-label">色彩検定 UC級</div></div>
+    <div class="sn available" id="n-color3" style="--nc:#ff90c0;--ng:#ff90c040" onclick="tap('color3')">
+      <div class="sn-circle">🎨<div class="sn-badge">✦</div></div><div class="sn-label">色彩検定 3級</div></div>
+  </div>
+  <div class="node-row">
+    <div class="sn locked" id="n-color2" style="--nc:#ff70a8;--ng:#ff70a840" onclick="tap('color2')">
+      <div class="sn-circle">🎨<div class="sn-badge">🔒</div></div><div class="sn-label">色彩検定 2級</div></div>
+    <div class="sn locked" id="n-color1" style="--nc:#e840a0;--ng:#e840a040" onclick="tap('color1')">
+      <div class="sn-circle">🎨<div class="sn-badge">🔒</div></div><div class="sn-label">色彩検定 1級</div></div>
+  </div>
+  <div class="node-row">
+    <div class="sn available" id="n-color-std" style="--nc:#c060e0;--ng:#c060e040" onclick="tap('color-std')">
+      <div class="sn-circle">🖌️<div class="sn-badge">✦</div></div><div class="sn-label">カラーコーディネーター スタンダード</div></div>
+    <div class="sn locked" id="n-color-adv" style="--nc:#a030c0;--ng:#a030c040" onclick="tap('color-adv')">
+      <div class="sn-circle">🖌️<div class="sn-badge">🔒</div></div><div class="sn-label">カラーコーディネーター アドバンス</div></div>
+  </div>
+
+  <div class="sec-head">ファッション・デザイン</div>
+  <div class="node-row">
+    <div class="sn available" id="n-fashion3" style="--nc:#ff8040;--ng:#ff804040" onclick="tap('fashion3')">
+      <div class="sn-circle">👗<div class="sn-badge">✦</div></div><div class="sn-label">ファッションビジネス能力検定 3級</div></div>
+    <div class="sn locked" id="n-fashion2" style="--nc:#ff6020;--ng:#ff602040" onclick="tap('fashion2')">
+      <div class="sn-circle">👗<div class="sn-badge">🔒</div></div><div class="sn-label">ファッションビジネス能力検定 2級</div></div>
+    <div class="sn locked" id="n-fashion1" style="--nc:#e04000;--ng:#e0400040" onclick="tap('fashion1')">
+      <div class="sn-circle">👗<div class="sn-badge">🔒</div></div><div class="sn-label">ファッションビジネス能力検定 1級</div></div>
+  </div>
+  <div class="node-row">
+    <div class="sn available" id="n-interior" style="--nc:#60c0a0;--ng:#60c0a040" onclick="tap('interior')">
+      <div class="sn-circle">🛋️<div class="sn-badge">✦</div></div><div class="sn-label">インテリアコーディネーター</div></div>
+    <div class="sn available" id="n-flower" style="--nc:#ff80a0;--ng:#ff80a040" onclick="tap('flower')">
+      <div class="sn-circle">💐<div class="sn-badge">✦</div></div><div class="sn-label">フラワーデザイナー</div></div>
+  </div>
+
+  <div class="sec-head">美容・ネイル・メイク</div>
+  <div class="node-row">
+    <div class="sn available" id="n-nail3" style="--nc:#ffb0d0;--ng:#ffb0d040" onclick="tap('nail3')">
+      <div class="sn-circle">💅<div class="sn-badge">✦</div></div><div class="sn-label">ネイリスト技能検定 3級</div></div>
+    <div class="sn locked" id="n-nail2" style="--nc:#ff80b0;--ng:#ff80b040" onclick="tap('nail2')">
+      <div class="sn-circle">💅<div class="sn-badge">🔒</div></div><div class="sn-label">ネイリスト技能検定 2級</div></div>
+    <div class="sn locked" id="n-nail1" style="--nc:#ff4090;--ng:#ff409040" onclick="tap('nail1')">
+      <div class="sn-circle">💅<div class="sn-badge">🔒</div></div><div class="sn-label">ネイリスト技能検定 1級</div></div>
+  </div>
+  <div class="node-row">
+    <div class="sn available" id="n-makeup3" style="--nc:#ffa0c0;--ng:#ffa0c040" onclick="tap('makeup3')">
+      <div class="sn-circle">💄<div class="sn-badge">✦</div></div><div class="sn-label">メイクアップ技術検定 3級</div></div>
+    <div class="sn locked" id="n-makeup2" style="--nc:#ff70a0;--ng:#ff70a040" onclick="tap('makeup2')">
+      <div class="sn-circle">💄<div class="sn-badge">🔒</div></div><div class="sn-label">メイクアップ技術検定 2級</div></div>
+    <div class="sn locked" id="n-makeup1" style="--nc:#e04080;--ng:#e0408040" onclick="tap('makeup1')">
+      <div class="sn-circle">💄<div class="sn-badge">🔒</div></div><div class="sn-label">メイクアップ技術検定 1級</div></div>
+  </div>
+
+</div></div>
+
+<!-- オーバーレイ＆シート -->
+
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sh-head">
+    <div class="sh-icon" id="shIcon"></div>
+    <div class="sh-titles">
+      <div class="sh-name" id="shName"></div>
+      <div class="sh-diff" id="shDiff"></div>
+    </div>
+    <div class="sh-genre" id="shGenre"></div>
+  </div>
+  <div class="sh-body">
+    <div class="sh-status-bar" id="shStatusBar"></div>
+    <div class="tag-row" id="shTags"></div>
+    <div class="meta-grid" id="shMeta"></div>
+    <div class="ss-title">能力値への貢献</div>
+    <div class="param-contrib" id="shContrib"></div>
+    <div class="ss-title">説明</div>
+    <div class="ss-body" id="shDesc"></div>
+    <div id="shLinks"></div>
+  </div>
+  <button class="sh-btn" id="shBtn" onclick="doAction()"></button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== パラメーター定義 =====
+// 各資格がどのパラメーターにどれだけ貢献するか
+const PARAMS = {
+  knowledge:{label:'KNOWLEDGE', jlabel:'知識',       color:'#e8b84b', icon:'💡'},
+  creation: {label:'CREATION',  jlabel:'創造',       color:'#ff70a8', icon:'🎨'},
+  tech:     {label:'TECH',      jlabel:'IT',color:'#00dcc0', icon:'💻'},
+  skill:    {label:'SKILL',     jlabel:'技術',       color:'#60d880', icon:'🛠️'},
+  global:   {label:'GLOBAL',    jlabel:'国際',       color:'#48b0f0', icon:'🌍'},
+  mobile:   {label:'MOBILE',    jlabel:'機動',       color:'#ffa040', icon:'🚗'},
+};
+
+// ===== スキルデータ =====
+const SK = {
+  // MONEY
+  fp3:     {l:'FP 3級',      g:'💰 FP', i:'💰', c:'var(--c-money)',
+            d:'FPの入口。家計・保険・年金・税金の基礎。今まさに勉強中！', now:true,
+            diff:'★★☆☆☆', period:'2〜3ヶ月', exam:'CBT随時', cost:'学科4,000＋実技4,000円',
+            links:[{t:'日本FP協会',u:'https://www.jafp.or.jp/'}], req:[],
+            params:{knowledge:8}},
+  fp2:     {l:'FP 2級',      g:'💰 FP', i:'💰', c:'#d4d400',
+            d:'FPとして実務対応できる知識を習得。ライフプラン相談・保険・資産設計の実践的スキルが身につく。',
+            diff:'★★★☆☆', period:'3〜4ヶ月', exam:'CBT随時', cost:'約8,000円',
+            links:[{t:'日本FP協会',u:'https://www.jafp.or.jp/'}], req:['fp3'],
+            params:{knowledge:15}},
+  boki3:   {l:'簿記 3級',   g:'📊 会計', i:'📊', c:'var(--c-biz)',
+            d:'会計の基礎。FP×簿記でトレードの企業分析力が格段に上がる。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'CBT随時', cost:'約2,850円',
+            links:[{t:'日商簿記',u:'https://www.kentei.ne.jp/bookkeeping'}], req:[],
+            params:{knowledge:8}},
+  boki2:   {l:'簿記 2級',   g:'📊 会計', i:'📊', c:'#00b0d0',
+            d:'財務諸表の作成・分析。経理・財務職への転職や独立開業で強力な武器になる。',
+            diff:'★★★★☆', period:'3〜6ヶ月', exam:'CBT随時', cost:'約4,720円',
+            links:[{t:'日商簿記',u:'https://www.kentei.ne.jp/bookkeeping'}], req:['boki3'],
+            params:{knowledge:15}},
+  boki1:   {l:'簿記 1級',   g:'📊 会計', i:'📊', c:'#00d0f0',
+            d:'日商簿記の最高峰。合格率10%以下の超難関。取得すると税理士試験の受験資格が得られる。会計のプロフェッショナルの証。',
+            diff:'★★★★★', period:'1〜2年', exam:'年2回（6・11月）', cost:'約7,850円',
+            links:[{t:'日商簿記',u:'https://www.kentei.ne.jp/bookkeeping'}], req:['boki2'],
+            params:{knowledge:25}},
+  shoken:  {l:'証券外務員', g:'📈 投資', i:'📈', c:'var(--c-biz)',
+            d:'金融商品・投資の法規制知識。実践トレーダー×法的知識で説得力倍増。',
+            diff:'★★★☆☆', period:'1〜2ヶ月', exam:'随時（CBT）', cost:'約10,000円',
+            links:[{t:'日本証券業協会',u:'https://www.jsda.or.jp/'}], req:[],
+            params:{knowledge:12}},
+  takken:  {l:'宅建',       g:'🏠 不動産', i:'🏠', c:'var(--c-restate)',
+            d:'不動産取引の専門知識。FPの資産設計で不動産アドバイスが可能に。',
+            diff:'★★★★☆', period:'3〜6ヶ月', exam:'年1回（10月）', cost:'約7,000円',
+            links:[{t:'不動産適正取引推進機構',u:'https://www.retio.or.jp/'}], req:[],
+            params:{knowledge:20}},
+  afp:     {l:'AFP',        g:'💰 FP', i:'🏅', c:'var(--c-money)',
+            d:'FP2級＋認定研修で取得。名刺に書けるプロの証。',
+            diff:'★★☆☆☆', period:'FP2級後2〜3ヶ月', exam:'FP2級＋研修', cost:'約20,000円',
+            links:[{t:'日本FP協会',u:'https://www.jafp.or.jp/exam/afp/'}], req:['fp2'], 
+            params:{knowledge:18}},
+  fp1:     {l:'FP 1級',     g:'💰 FP', i:'💰', c:'#ffaa00',
+            d:'FP技能士の最高峰。受験には実務経験が必須。知名度はCFPに劣るが国家資格として最上位。取得者は少なく希少価値が高い。',
+            diff:'★★★★★', period:'6ヶ月〜1年', exam:'学科：年2回 / 実技：随時', cost:'約8,900円',
+            links:[{t:'日本FP協会',u:'https://www.jafp.or.jp/exam/'}], req:['fp2'],
+            params:{knowledge:25}},
+  cfp:     {l:'CFP',        g:'💰 FP', i:'🎖️', c:'#ff6020',
+            d:'FP最高峰・世界25ヶ国通用の国際資格。独立FPの最強武器。',
+            diff:'★★★★☆', period:'1〜2年', exam:'年2回（6・11月）', cost:'約35,000円',
+            links:[{t:'日本FP協会',u:'https://www.jafp.or.jp/exam/cfp/'}], req:['afp'],
+            params:{knowledge:30}},
+  sharoshi:{l:'社労士',     g:'⚖️ 労務', i:'👔', c:'var(--c-labor)',
+            d:'労働法・社会保険の専門家。FPと組み合わせで守備範囲が大幅に広がる。',
+            diff:'★★★★★', period:'6ヶ月〜1年', exam:'年1回（8月）', cost:'約15,000円',
+            links:[{t:'全国社会保険労務士会',u:'https://www.shakaihokenroumushi.jp/'}], req:[],
+            params:{knowledge:30}},
+
+  zeirishi:{l:'税理士',     g:'🧾 税務', i:'🧾', c:'#ffcc00',
+            d:'税務・会計の最高峰資格。独立開業で高収入を得やすい。難関だが需要は常に高い。',
+            diff:'★★★★★', period:'3〜5年', exam:'年1回（8月）', cost:'約7,500円',
+            links:[{t:'日本税理士会連合会',u:'https://www.nichizeiren.or.jp/'}], req:[],
+            params:{knowledge:35}},
+  kaikei:  {l:'公認会計士', g:'🏦 会計', i:'🏦', c:'#ffcc00',
+            d:'財務・監査の専門家。三大国家資格のひとつ。取得後は高待遇が保証される。',
+            diff:'★★★★★', period:'3〜5年', exam:'年1回', cost:'約19,500円',
+            links:[{t:'日本公認会計士協会',u:'https://jicpa.or.jp/'}], req:[],
+            params:{knowledge:40}},
+  cma:     {l:'中小企業診断士',g:'📊 経営', i:'📉', c:'#ffcc00',
+            d:'経営コンサルタントの国家資格。ビジネス全般の知識を体系的に習得できる。',
+            diff:'★★★★☆', period:'1〜2年', exam:'年1回（8月）', cost:'約14,000円',
+            links:[{t:'中小企業診断協会',u:'https://www.j-smeca.jp/'}], req:[],
+            params:{knowledge:25}},
+  // LAW
+  gyosei:  {l:'行政書士',   g:'📜 法律', i:'📜', c:'var(--c-law)',
+            d:'官公署への書類作成・申請代行のプロ。独立開業しやすく、FPと相性抜群。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（11月）', cost:'10,400円',
+            links:[{t:'日本行政書士会連合会',u:'https://www.gyosei.or.jp/'}], req:[],
+            params:{knowledge:25}},
+  shihosho:{l:'司法書士',   g:'📜 法律', i:'⚖️', c:'var(--c-law)',
+            d:'不動産登記・会社設立の専門家。難関だが独立開業の花形資格。',
+            diff:'★★★★★', period:'2〜3年', exam:'年1回（7月）', cost:'約8,000円',
+            links:[{t:'日本司法書士会連合会',u:'https://www.shiho-shoshi.or.jp/'}], req:[],
+            params:{knowledge:35}},
+  benrishi:{l:'弁理士',     g:'💡 知財', i:'💡', c:'#c0a0ff',
+            d:'特許・商標・著作権など知的財産の専門家。クリエイターやIT系に強い。',
+            diff:'★★★★★', period:'2〜4年', exam:'年1回（5〜7月）', cost:'約12,000円',
+            links:[{t:'日本弁理士会',u:'https://www.jpaa.or.jp/'}], req:[],
+            params:{knowledge:30}},
+  bengo:   {l:'弁護士',     g:'🏛️ 法律', i:'🏛️', c:'#d0b0ff',
+            d:'法律家の最高峰。司法試験合格が必要。あらゆる法的問題に対応できる。',
+            diff:'★★★★★', period:'5〜10年', exam:'年1回（7月）', cost:'約28,000円',
+            links:[{t:'日本弁護士連合会',u:'https://www.nichibenren.or.jp/'}], req:[],
+            params:{knowledge:50}},
+  koumuin1:{l:'公務員 一般職',g:'🏢 公務員', i:'🏢', c:'var(--c-law)',
+            d:'国や地方自治体で働く安定した職。試験は年齢制限があるため計画的な準備が必要。',
+            diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年1回', cost:'無料',
+            links:[], req:[], params:{knowledge:20}},
+  koumuin2:{l:'公務員 総合職',g:'🏛️ 公務員', i:'🏛️', c:'#b890ff',
+            d:'国家公務員キャリア。日本の行政を動かす最難関試験のひとつ。',
+            diff:'★★★★★', period:'1〜2年', exam:'年1回', cost:'無料',
+            links:[], req:[], params:{knowledge:35}},
+  // FOOD
+  eiyoshi: {l:'栄養士',     g:'🥗 栄養', i:'🥗', c:'var(--c-food)',
+            d:'栄養管理のプロ。病院・学校・介護施設など幅広い職場で活躍できる。',
+            diff:'★★★☆☆', period:'2年（専門学校）', exam:'卒業時取得', cost:'学費による',
+            links:[], req:[], params:{creation:20,skill:8}},
+  kanrieiyoshi:{l:'管理栄養士',g:'🥗 栄養', i:'🥗', c:'#ff8855',
+            d:'栄養士の上位資格。傷病者への栄養指導も可能になる。',
+            diff:'★★★★☆', period:'4年（大学）＋試験', exam:'年1回（2月）', cost:'約6,800円',
+            links:[], req:['eiyoshi'], params:{creation:30,skill:15}},
+  chori:   {l:'調理師',     g:'🍳 調理', i:'🍳', c:'var(--c-food)',
+            d:'調理の国家資格。飲食店開業や料理人としての信頼度が大幅アップ。',
+            diff:'★★★☆☆', period:'1〜2年', exam:'各都道府県', cost:'約6,400円',
+            links:[], req:[], params:{creation:18,skill:8}},
+  seika:   {l:'製菓衛生師', g:'🎂 製菓', i:'🎂', c:'#ff8855',
+            d:'お菓子・パン作りの国家資格。製菓学校卒業後に受験可能。',
+            diff:'★★★☆☆', period:'1〜2年（専門学校）', exam:'各都道府県', cost:'約8,000円',
+            links:[], req:[], params:{creation:15,skill:8}},
+  sommelier:{l:'ソムリエ',  g:'🍷 酒類', i:'🍷', c:'#cc88ff',
+            d:'ワインのプロ。飲食店・ホテルで高い評価を得られる。実技試験あり。',
+            diff:'★★★★☆', period:'1〜2年', exam:'年1回（筆記＋実技）', cost:'約29,600円',
+            links:[{t:'日本ソムリエ協会',u:'https://www.sommelier.jp/'}], req:[],
+            params:{creation:22,global:5}},
+  barista: {l:'バリスタ',   g:'☕ コーヒー', i:'☕', c:'#c08040',
+            d:'コーヒーの専門家。民間資格だが飲食・カフェ業界での信頼度が高い。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'随時', cost:'約25,000円',
+            links:[], req:[], params:{creation:12}},
+  shokuhin:{l:'食品衛生責任者',g:'🧫 衛生', i:'🧫', c:'var(--c-food)',
+            d:'飲食店開業に必須。1日の講習で取得できる。開業予定者は必携。',
+            diff:'★☆☆☆☆', period:'1日', exam:'講習受講のみ', cost:'約10,000円',
+            links:[], req:[], params:{knowledge:5,creation:5}},
+  haccp:   {l:'HACCP管理者',g:'🔬 衛生管理', i:'🔬', c:'#ff8855',
+            d:'食品安全管理の国際基準。食品製造・流通業での重要性が急上昇中。',
+            diff:'★★★☆☆', period:'1〜3ヶ月', exam:'随時', cost:'約30,000円',
+            links:[], req:[], params:{knowledge:8,creation:5}},
+  sake:    {l:'唎酒師',     g:'🍶 日本酒', i:'🍶', c:'#ffe0a0',
+            d:'日本酒のプロ資格。日本酒提供や観光業での差別化に使える。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'随時', cost:'約53,000円',
+            links:[{t:'日本酒サービス研究会',u:'https://www.sake-service.jp/'}], req:[],
+            params:{creation:16,global:5}},
+  // LANG
+  toeic600:{l:'TOEIC 600',  g:'🌐 語学', i:'🌐', c:'var(--c-lang)',
+            d:'ビジネス英語の入口ライン。海外展開・外資系への第一歩。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'月1〜2回', cost:'約7,810円',
+            links:[{t:'TOEIC公式',u:'https://www.toeic.or.jp/'}], req:[],
+            params:{global:15}},
+  toeic800:{l:'TOEIC 800',  g:'🌐 語学', i:'🌐', c:'#ffa040',
+            d:'ビジネス英語で十分通用するレベル。履歴書に堂々と書ける。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'月1〜2回', cost:'約7,810円',
+            links:[{t:'TOEIC公式',u:'https://www.toeic.or.jp/'}], req:['toeic600'],
+            params:{global:20}},
+  toeic900:{l:'TOEIC 900+', g:'🌐 語学', i:'🌐', c:'#ffc060',
+            d:'グローバルに活躍できる英語力の証明。900超えで希少価値が一気に上がる。',
+            diff:'★★★★★', period:'1〜2年', exam:'月1〜2回', cost:'約7,810円',
+            links:[{t:'TOEIC公式',u:'https://www.toeic.or.jp/'}], req:['toeic800'],
+            params:{global:30}},
+  eiken2:  {l:'英検 2級',   g:'🔤 英語', i:'🔤', c:'var(--c-lang)',
+            d:'高校卒業程度の英語力。海外留学・就職の足がかり。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年3回', cost:'約7,500円',
+            links:[{t:'英検公式',u:'https://www.eiken.or.jp/'}], req:[],
+            params:{global:15}},
+  eikenPre1:{l:'英検 準1級',g:'🔤 英語', i:'🔤', c:'#ffa040',
+            d:'大学中級程度。リスニング・スピーキングも本格化してくる。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年3回', cost:'約9,900円',
+            links:[{t:'英検公式',u:'https://www.eiken.or.jp/'}], req:['eiken2'],
+            params:{global:22}},
+  eiken1:  {l:'英検 1級',   g:'🔤 英語', i:'🔤', c:'#ffc060',
+            d:'最高峰。ネイティブに近い英語力の証明。合格率7〜10%の超難関。',
+            diff:'★★★★★', period:'2〜3年', exam:'年3回', cost:'約11,800円',
+            links:[{t:'英検公式',u:'https://www.eiken.or.jp/'}], req:['eikenPre1'],
+            params:{global:35}},
+  hsk3:    {l:'HSK 3級',    g:'🀄 中国語', i:'🀄', c:'var(--c-lang)',
+            d:'日常会話レベルの中国語。HSKは数字が大きいほど上級。600単語が目安。',
+            diff:'★★☆☆☆', period:'3〜4ヶ月', exam:'月1回', cost:'約6,000円',
+            links:[{t:'HSK公式',u:'https://www.hskj.jp/'}], req:[],
+            params:{global:12}},
+  hsk5:    {l:'HSK 5級',    g:'🀄 中国語', i:'🀄', c:'#ffa040',
+            d:'新聞・ドラマが理解できるレベル。中国語圏でのビジネスに十分通用する。',
+            diff:'★★★★☆', period:'1〜2年', exam:'月1回', cost:'約6,000円',
+            links:[{t:'HSK公式',u:'https://www.hskj.jp/'}], req:['hsk3'],
+            params:{global:25}},
+  korean3: {l:'韓国語 3級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'var(--c-lang)',
+            d:'韓国語能力試験（TOPIK）3級。日常会話がある程度できるレベル。',
+            diff:'★★☆☆☆', period:'3〜6ヶ月', exam:'年2〜3回', cost:'約5,000円',
+            links:[], req:[], params:{global:12}},
+  french:  {l:'仏検 3級',   g:'🇫🇷 フランス語', i:'🇫🇷', c:'#ffa040',
+            d:'フランス語の基礎。ファッション・料理・観光業界での差別化に有効。',
+            diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年2回（6・11月）', cost:'約5,000円',
+            links:[], req:[], params:{global:12}},
+  spanish: {l:'西検 3級',   g:'🇪🇸 スペイン語', i:'🇪🇸', c:'#ffa040',
+            d:'スペイン語の基礎。話者人口が世界第2位の言語で需要が高い。',
+            diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年2回', cost:'約5,000円',
+            links:[], req:[], params:{global:12}},
+  // IT
+  kanji3:   {l:'漢検 3級',    g:'🌐 語学', i:'📚', c:'#d87840',
+            d:'中学卒業程度。常用漢字約1607字。ビジネスの基礎レベル。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年3回（2・6・10月）', cost:'2,500円',
+            links:[{t:'日本漢字能力検定協会',u:'https://www.kanken.or.jp/'}], req:[],
+            params:{global:8}},
+  kanjiPre2:{l:'漢検 準2級', g:'🌐 語学', i:'📚', c:'#d87840',
+            d:'高校在学程度。常用漢字約1940字。就活でアピールできるレベル。',
+            diff:'★★★☆☆', period:'2〜3ヶ月', exam:'年3回（2・6・10月）', cost:'2,500円',
+            links:[{t:'日本漢字能力検定協会',u:'https://www.kanken.or.jp/'}], req:['kanji3'],
+            params:{global:12}},
+  kanji2:   {l:'漢検 2級',    g:'🌐 語学', i:'📚', c:'#e89040',
+            d:'高校卒業程度。常用漢字全2136字。履歴書に書けるスタンダード。',
+            diff:'★★★☆☆', period:'3〜4ヶ月', exam:'年3回（2・6・10月）', cost:'3,500円',
+            links:[{t:'日本漢字能力検定協会',u:'https://www.kanken.or.jp/'}], req:['kanjiPre2'],
+            params:{global:18}},
+  kanjiPre1:{l:'漢検 準1級', g:'🌐 語学', i:'🏛️', c:'#e8b84b',
+            d:'大学・一般程度。約3000字。合格率15%前後の難関。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年3回（2・6・10月）', cost:'4,500円',
+            links:[{t:'日本漢字能力検定協会',u:'https://www.kanken.or.jp/'}], req:['kanji2'],
+            params:{global:25}},
+  kanji1:   {l:'漢検 1級',    g:'🌐 語学', i:'🏆', c:'#f5d07a',
+            d:'約6000字。合格率10%以下の超難関。漢字マスターの証。',
+            diff:'★★★★★', period:'1年以上', exam:'年3回（2・6・10月）', cost:'5,000円',
+            links:[{t:'日本漢字能力検定協会',u:'https://www.kanken.or.jp/'}], req:['kanjiPre1'],
+            params:{global:35}},
+  itpass:  {l:'ITパスポート',g:'💻 IT', i:'💻', c:'var(--c-it)',
+            d:'IT系最初の一歩。デジタル社会の基礎知識。FPとも直結するIT素養が身につく。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'随時（CBT）', cost:'約7,500円',
+            links:[{t:'IPA公式',u:'https://www.ipa.go.jp/shiken/'}], req:[],
+            params:{tech:15,knowledge:5}},
+  fg:      {l:'基本情報技術者',g:'💻 IT', i:'💻', c:'#00c8b0',
+            d:'ITエンジニアの登竜門。プログラミング・ネットワーク・DBの基礎。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'随時（CBT）', cost:'約7,500円',
+            links:[{t:'IPA公式',u:'https://www.ipa.go.jp/shiken/'}], req:['itpass'],
+            params:{tech:20}},
+  ap:      {l:'応用情報技術者',g:'💻 IT', i:'💻', c:'#00a896',
+            d:'上位のIT国家資格。午後の記述式が難関。高度試験への道が開ける。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年2回（4・10月）', cost:'約7,500円',
+            links:[{t:'IPA公式',u:'https://www.ipa.go.jp/shiken/'}], req:['fg'],
+            params:{tech:25}},
+  awsccp:  {l:'AWS CCP',    g:'☁️ クラウド', i:'☁️', c:'var(--c-it)',
+            d:'AWSの入門資格。クラウドの基本概念を体系的に理解できる。エンジニア以外にも有用。',
+            diff:'★★★☆☆', period:'1〜2ヶ月', exam:'随時（オンライン）', cost:'約15,000円',
+            links:[{t:'AWS認定',u:'https://aws.amazon.com/jp/certification/'}], req:[],
+            params:{creation:20}},
+  awssaa:  {l:'AWS SAA',    g:'☁️ クラウド', i:'☁️', c:'#00c8b0',
+            d:'AWSソリューションアーキテクト。設計・構築の実践的スキルを証明する。',
+            diff:'★★★★☆', period:'2〜4ヶ月', exam:'随時（オンライン）', cost:'約20,000円',
+            links:[{t:'AWS認定',u:'https://aws.amazon.com/jp/certification/'}], req:['awsccp'],
+            params:{tech:22}},
+  gcp:     {l:'GCP ACE',    g:'☁️ クラウド', i:'☁️', c:'var(--c-it)',
+            d:'Google Cloud Associate Cloud Engineer。GCPでのシステム構築スキルを証明。',
+            diff:'★★★★☆', period:'2〜4ヶ月', exam:'随時（オンライン）', cost:'約26,000円',
+            links:[], req:[], params:{tech:22}},
+  security:{l:'情報セキュリティマネジメント',g:'🔐 セキュリティ', i:'🔐', c:'var(--c-it)',
+            d:'情報セキュリティ管理の基礎。DX推進で需要が急上昇中。ITパスポートの次のステップ。',
+            diff:'★★★☆☆', period:'2〜4ヶ月', exam:'随時（CBT）', cost:'約7,500円',
+            links:[{t:'IPA公式',u:'https://www.ipa.go.jp/shiken/'}], req:[],
+            params:{tech:18,knowledge:5}},
+  gaiq:    {l:'GA4認定',    g:'📉 データ', i:'📉', c:'#00c8b0',
+            d:'Google Analytics 4の公式認定。Webマーケ・データ分析の基礎スキル。',
+            diff:'★★☆☆☆', period:'2〜4週間', exam:'オンライン（随時・無料）', cost:'無料',
+            links:[{t:'Google Skillshop',u:'https://skillshop.google.com/'}], req:[],
+            params:{tech:10,knowledge:5}},
+  oracle:  {l:'Oracle DB',  g:'🗄️ DB', i:'🗄️', c:'#00a896',
+            d:'データベースの業界標準資格。バックエンドエンジニアとして市場価値が高まる。',
+            diff:'★★★★☆', period:'3〜6ヶ月', exam:'随時', cost:'約33,000円',
+            links:[], req:[], params:{tech:22}},
+  // DRIVE
+  futsuu:  {l:'普通免許',   g:'🚗 運転', i:'🚗', c:'var(--c-drive)',
+            d:'AT限定〜MT。社会人としての基本インフラ。教習所通いが一般的。',
+            diff:'★★☆☆☆', period:'2〜4ヶ月', exam:'各都道府県', cost:'約25〜35万円',
+            links:[], req:[], params:{mobile:20}},
+  chugata: {l:'中型免許',   g:'🚐 中型', i:'🚐', c:'#40aaee',
+            d:'4トントラックやマイクロバスが運転可能に。運送・物流業での活用が広い。',
+            diff:'★★★☆☆', period:'1〜2ヶ月', exam:'各都道府県', cost:'約15〜20万円',
+            links:[], req:['futsuu'], params:{mobile:25}},
+  okugata: {l:'大型免許',   g:'🚚 大型', i:'🚚', c:'#2090cc',
+            d:'大型トラック・大型バス。物流・旅客業界での需要が非常に高い。',
+            diff:'★★★★☆', period:'2〜3ヶ月', exam:'各都道府県', cost:'約25〜35万円',
+            links:[], req:['chugata'], params:{mobile:30}},
+  nirin:   {l:'普通二輪',   g:'🏍️ バイク', i:'🏍️', c:'var(--c-drive)',
+            d:'400cc以下のバイクに乗れる。通勤・ツーリングと用途は広い。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'各都道府県', cost:'約8〜15万円',
+            links:[], req:[], params:{mobile:15}},
+  nirin_ok:{l:'大型二輪',   g:'🏍️ バイク', i:'🏍️', c:'#40aaee',
+            d:'排気量制限なし。大型バイクに乗れるバイク乗りの頂点。',
+            diff:'★★★☆☆', period:'2〜3ヶ月', exam:'各都道府県', cost:'約10〜18万円',
+            links:[], req:['nirin'], params:{mobile:22}},
+  taxi:    {l:'二種免許',   g:'🚕 旅客', i:'🚕', c:'var(--c-drive)',
+            d:'タクシー・ハイヤーでお客さんを乗せるために必須。副業としても人気急上昇中。',
+            diff:'★★★☆☆', period:'1〜2ヶ月', exam:'各都道府県', cost:'約15〜25万円',
+            links:[], req:['futsuu'], params:{mobile:18,knowledge:5}},
+  forklit: {l:'フォークリフト',g:'🏗️ 特殊', i:'🏗️', c:'var(--c-drive)',
+            d:'倉庫・工場での荷役作業に必須。比較的短期間で取得できる実用資格。',
+            diff:'★★☆☆☆', period:'4〜5日', exam:'技能講習', cost:'約3〜5万円',
+            links:[], req:[], params:{mobile:10,skill:5}},
+  crane:   {l:'クレーン運転',g:'🏗️ 特殊', i:'🏗️', c:'#40aaee',
+            d:'建設現場・港湾での活躍に必要。種類によって必要な資格が異なる。',
+            diff:'★★★☆☆', period:'1〜2週間', exam:'技能講習', cost:'約4〜8万円',
+            links:[], req:[], params:{mobile:12,skill:5}},
+  yacht:   {l:'小型船舶',   g:'⛵ 船', i:'⛵', c:'#60d0ff',
+            d:'プレジャーボートや釣り船に乗れる。1級・2級があり水域が異なる。',
+            diff:'★★★☆☆', period:'2〜4ヶ月', exam:'随時', cost:'約15〜20万円',
+            links:[], req:[], params:{mobile:15}},
+  pilot:   {l:'自家用操縦士',g:'✈️ 航空', i:'✈️', c:'#a0d8ff',
+            d:'自家用飛行機を操縦できる資格。取得難易度と費用は高めだが夢がある。',
+            diff:'★★★★★', period:'1〜2年', exam:'随時', cost:'約500万円以上',
+            links:[], req:[], params:{mobile:35,tech:10}},
+  // MEDICAL
+  kango:   {l:'看護師',     g:'💊 医療', i:'💊', c:'var(--c-medical)',
+            d:'医療現場の主力。需要が非常に高く就職に困らない。夜勤手当で収入も高め。',
+            diff:'★★★★☆', period:'3〜4年（専門・大学）', exam:'年1回（2月）', cost:'約6,800円',
+            links:[], req:[], params:{skill:30,knowledge:10}},
+  yakuzai: {l:'薬剤師',     g:'💉 医療', i:'💉', c:'#ff90c0',
+            d:'薬の専門家。6年制大学を卒業し国家試験合格が必要。安定した需要がある。',
+            diff:'★★★★★', period:'6年（大学）', exam:'年1回（2月）', cost:'約6,800円',
+            links:[], req:[], params:{skill:35,knowledge:15}},
+  ishi:    {l:'医師',       g:'🩺 医療', i:'🩺', c:'#ffa0d0',
+            d:'最高峰の医療資格。6年間の医学部教育と国家試験合格が必要。',
+            diff:'★★★★★', period:'6年（大学）＋研修', exam:'年1回（2月）', cost:'約27,000円',
+            links:[], req:[], params:{skill:50,knowledge:20}},
+  kaigo2:  {l:'介護職員 初任者研修',g:'🤝 介護', i:'🤝', c:'var(--c-medical)',
+            d:'介護の入口資格。130時間の研修で取得可能。介護業界への第一歩。',
+            diff:'★★☆☆☆', period:'1〜4ヶ月', exam:'研修修了', cost:'約5〜10万円',
+            links:[], req:[], params:{skill:8}},
+  kaigo:   {l:'介護福祉士', g:'🫂 介護', i:'🫂', c:'#ff90c0',
+            d:'介護の国家資格。実務経験3年以上または専門学校卒業後に受験可能。',
+            diff:'★★★☆☆', period:'3年（実務経験）', exam:'年1回（1月）', cost:'約9,300円',
+            links:[], req:['kaigo2'], params:{skill:20,knowledge:5}},
+  sw:      {l:'社会福祉士', g:'🌱 福祉', i:'🌱', c:'#ffa0d0',
+            d:'福祉の相談員資格。生活困窮者・高齢者・障害者のサポートを担う。',
+            diff:'★★★★☆', period:'4年（大学）', exam:'年1回（2月）', cost:'約9,600円',
+            links:[], req:[], params:{skill:20,knowledge:10}},
+  trainer: {l:'NSCA-CPT',  g:'💪 フィットネス', i:'💪', c:'var(--c-medical)',
+            d:'国際的なパーソナルトレーナー資格。フィットネス業界での信頼度が高い。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'随時（CBT）', cost:'約6〜8万円',
+            links:[], req:[], params:{skill:15}},
+  beauty:  {l:'美容師',     g:'💄 美容', i:'💄', c:'#ff90c0',
+            d:'美容師法に基づく国家資格。専門学校2年間の教育が必要。',
+            diff:'★★★☆☆', period:'2年（専門学校）', exam:'年2回（3・9月）', cost:'約15,000円',
+            links:[], req:[], params:{skill:15,creation:8}},
+  massage: {l:'あん摩マッサージ指圧師',g:'🖐️ 療術', i:'🖐️', c:'#ffa0d0',
+            d:'マッサージの国家資格。専門学校3年間の教育が必要。需要は安定している。',
+            diff:'★★★☆☆', period:'3年（専門学校）', exam:'年1回（2月）', cost:'約16,300円',
+            links:[], req:[], params:{skill:18}},
+  // ===== 建築・土木 =====
+  kenchiku2:{l:'二級建築士', g:'🏛️ 建築', i:'🏛️', c:'#b0c060',
+            d:'木造・小規模建築物を設計・監理できる国家資格。建築業界への入口。実務経験または建築系学科卒業後に受験可能。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（7月）', cost:'約17,000円',
+            links:[{t:'建築技術教育普及センター',u:'https://www.jaeic.or.jp/'}], req:[],
+            params:{skill:15,knowledge:8}},
+  kenchiku1:{l:'一級建築士', g:'🏛️ 建築', i:'🏛️', c:'#d0e080',
+            d:'建築物の設計・監理全般が可能な最上位資格。大型建築・公共施設を手がけるために必要。業界最高峰の証。',
+            diff:'★★★★★', period:'1〜2年', exam:'年1回（7月）', cost:'約17,000円',
+            links:[{t:'建築技術教育普及センター',u:'https://www.jaeic.or.jp/'}], req:['kenchiku2'],
+            params:{skill:25,knowledge:15}},
+  setsubi1k: {l:'設備設計一級建築士', g:'🏗️ 建築・土木', i:'⚙️', c:'#60c8a0',
+            d:'建築設備の高度な専門家。一級建築士取得後に講習と修了考査で取得。空調・電気・衛生設備の設計を担う。',
+            diff:'★★★★☆', period:'取得後1年以上', exam:'講習・修了考査（年1回）', cost:'約70,000円',
+            links:[{t:'建築技術教育普及センター',u:'https://www.jaeic.or.jp/'}], req:['kenchiku1'],
+            params:{knowledge:10}},
+  kanri:    {l:'構造設計一級建築士', g:'🏆 建築', i:'🏆', c:'#e8f0a0',
+            d:'一級建築士の上位資格。高度な構造設計ができる専門家。大規模建築の構造安全性を審査する権限を持つ。',
+            diff:'★★★★★', period:'1〜2年（一級建築士取得後5年以上）', exam:'年1回', cost:'約35,000円',
+            links:[], req:['kenchiku1'], params:{skill:30,knowledge:20}},
+  mokuzou:  {l:'木造建築士', g:'🪵 建築', i:'🪵', c:'#c0a050',
+            d:'木造建築物の設計・監理専門の建築士資格。伝統工法・古民家再生など木造建築に特化して活躍できる。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年1回（7月）', cost:'約14,000円',
+            links:[], req:[], params:{skill:10,knowledge:5}},
+  kenkan2:  {l:'建築施工管理技士 2級', g:'🦺 施工管理', i:'🦺', c:'#b0c060',
+            d:'建築工事の現場管理の国家資格。中小規模の工事で主任技術者になれる。施工会社でのキャリアに必須。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年1回（11月）', cost:'約10,500円',
+            links:[], req:[], params:{skill:12,knowledge:5}},
+  kenkan1:  {l:'建築施工管理技士 1級', g:'🦺 施工管理', i:'🦺', c:'#d0e080',
+            d:'大規模工事の現場管理ができる上位資格。監理技術者として大型プロジェクトを統括できる。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（6・10月）', cost:'約10,500円',
+            links:[], req:['kenkan2'], params:{skill:20,knowledge:10}},
+  doboku2:  {l:'土木施工管理技士 2級', g:'🏗️ 土木', i:'🏗️', c:'#90b040',
+            d:'道路・橋梁・河川などの土木工事管理資格。インフラ整備の現場で活躍できる。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年1回（11月）', cost:'約10,500円',
+            links:[], req:[], params:{skill:12,knowledge:5}},
+  doboku1:  {l:'土木施工管理技士 1級', g:'🏗️ 土木', i:'🏗️', c:'#b0d060',
+            d:'大規模な土木工事を管理できる最上位の施工管理資格。公共工事の入札に有利。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（7・10月）', cost:'約10,500円',
+            links:[], req:['doboku2'], params:{skill:20,knowledge:10}},
+  setsubi2: {l:'管工事施工管理技士 2級', g:'⚙️ 設備', i:'⚙️', c:'#80c090',
+            d:'給排水・空調などの設備工事管理資格。建築設備の専門技術者として活躍できる。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年1回（11月）', cost:'約10,500円',
+            links:[], req:[], params:{skill:10,tech:5}},
+  setsubi1: {l:'管工事施工管理技士 1級', g:'⚙️ 設備', i:'⚙️', c:'#a0d8b0',
+            d:'大規模な設備工事を管理できる上位資格。空調・衛生設備の大型案件に対応できる。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（6・10月）', cost:'約10,500円',
+            links:[], req:['setsubi2'], params:{skill:18,tech:10}},
+  denki2:   {l:'電気工事士 2種', g:'⚡ 電気', i:'⚡', c:'#b0c060',
+            d:'一般住宅・小規模店舗の電気工事ができる資格。建設・設備業界の基本資格。独立開業にも使える。',
+            diff:'★★★☆☆', period:'2〜4ヶ月', exam:'年2回（6・10月）', cost:'約9,300円',
+            links:[], req:[], params:{skill:12,tech:8}},
+  denki1:   {l:'電気工事士 1種', g:'⚡ 電気', i:'⚡', c:'#d0e080',
+            d:'工場・ビルなど大規模施設の電気工事ができる上位資格。実務経験3年後に免状交付。',
+            diff:'★★★★☆', period:'3〜6ヶ月', exam:'年2回（9・10月）', cost:'約10,900円',
+            links:[], req:['denki2'], params:{skill:20,tech:15}},
+  kanrishi: {l:'建築設備士', g:'🔧 設備', i:'🔧', c:'#80c090',
+            d:'建築設備の専門家として建築士にアドバイスできる資格。電気・空調・衛生の高度な知識が必要。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（6月）', cost:'約36,000円',
+            links:[], req:[], params:{skill:15,tech:12}},
+  shobo:    {l:'消防設備士', g:'🚒 防災', i:'🚒', c:'#ff8040',
+            d:'消火器・スプリンクラー・自動火災報知設備などの設置・点検を行う資格。種類が多く専門性が高い。',
+            diff:'★★★☆☆', period:'1〜3ヶ月', exam:'各都道府県（随時）', cost:'約3,400円',
+            links:[], req:[], params:{skill:10,knowledge:5}},
+  kantei:   {l:'不動産鑑定士', g:'🔍 鑑定', i:'🔍', c:'#b0c060',
+            d:'土地・建物の経済的価値を評価する国家資格。三大不動産資格のひとつで独立開業も可能。難関資格。',
+            diff:'★★★★★', period:'1〜2年', exam:'年1回（5・10月）', cost:'約12,800円',
+            links:[], req:[], params:{knowledge:25,skill:10}},
+  kanteishi:{l:'土地家屋調査士', g:'📐 測量', i:'📐', c:'#c0a050',
+            d:'土地・建物の所在・形状・面積などを調査・測量し登記申請を行う専門家。毎年約8%の合格率。',
+            diff:'★★★★★', period:'1〜2年', exam:'年1回（10月）', cost:'約8,000円',
+            links:[], req:[], params:{knowledge:20,skill:10}},
+  urban:    {l:'都市計画士（AICP）', g:'🏙️ 都市計画', i:'🏙️', c:'#90b040',
+            d:'まちづくり・都市計画の専門家。公共機関やコンサルタントでの需要が高く、民間でも活躍できる。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（6〜10月）', cost:'約9,000円',
+            links:[], req:[], params:{knowledge:18,skill:8}},
+  'color-uc':  {l:'色彩検定 UC級',  g:'🎨 色彩', i:'🎨', c:'#ff90c0',
+            d:'色のユニバーサルデザインに特化。色覚特性への配慮を学ぶ。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年2回（6・11月）', cost:'5,500円',
+            links:[{t:'色彩検定協会',u:'https://www.aft.or.jp/'}], req:[], params:{creation:8}},
+  'color3':    {l:'色彩検定 3級',   g:'🎨 色彩', i:'🎨', c:'#ff90c0',
+            d:'色彩の基礎。ファッション・デザイン系の入口として人気。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年2回（6・11月）', cost:'7,000円',
+            links:[{t:'色彩検定協会',u:'https://www.aft.or.jp/'}], req:[], params:{creation:8}},
+  'color2':    {l:'色彩検定 2級',   g:'🎨 色彩', i:'🎨', c:'#ff70a8',
+            d:'配色理論・色彩心理を実践的に学ぶ。デザイン職で重宝される。',
+            diff:'★★★☆☆', period:'2〜3ヶ月', exam:'年2回（6・11月）', cost:'10,000円',
+            links:[{t:'色彩検定協会',u:'https://www.aft.or.jp/'}], req:['color3'], params:{creation:15}},
+  'color1':    {l:'色彩検定 1級',   g:'🎨 色彩', i:'🎨', c:'#e840a0',
+            d:'色彩のプロフェッショナル。2次試験は実技あり。合格率30%前後。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年2回（6・11月）', cost:'15,000円',
+            links:[{t:'色彩検定協会',u:'https://www.aft.or.jp/'}], req:['color2','color3'], params:{creation:25}},
+  'color-std': {l:'カラーコーディネーター スタンダード', g:'🎨 色彩', i:'🖌️', c:'#c060e0',
+            d:'東京商工会議所主催。ビジネス・産業分野の色彩知識。',
+            diff:'★★★☆☆', period:'2〜3ヶ月', exam:'CBT随時', cost:'5,500円',
+            links:[{t:'東京商工会議所',u:'https://www.kentei.org/color/'}], req:[], params:{creation:12}},
+  'color-adv': {l:'カラーコーディネーター アドバンス', g:'🎨 色彩', i:'🖌️', c:'#a030c0',
+            d:'スタンダードの上位。ビジネス実践で活かせる高度な色彩知識。',
+            diff:'★★★★☆', period:'3〜5ヶ月', exam:'CBT随時', cost:'7,700円',
+            links:[{t:'東京商工会議所',u:'https://www.kentei.org/color/'}], req:['color-std'], params:{creation:20}},
+  fashion3:    {l:'ファッションビジネス能力検定 3級', g:'👗 ファッション', i:'👗', c:'#ff8040',
+            d:'ファッション業界の基礎知識。流通・マーチャンダイジングを学ぶ。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年2回（7・12月）', cost:'5,500円',
+            links:[{t:'日本ファッション教育振興協会',u:'https://www.japan-fashion.or.jp/'}], req:[], params:{creation:8}},
+  fashion2:    {l:'ファッションビジネス能力検定 2級', g:'👗 ファッション', i:'👗', c:'#ff6020',
+            d:'ファッション販売・企画の実践的知識。業界就職で評価される。',
+            diff:'★★★☆☆', period:'2〜3ヶ月', exam:'年2回（7・12月）', cost:'6,600円',
+            links:[{t:'日本ファッション教育振興協会',u:'https://www.japan-fashion.or.jp/'}], req:['fashion3'], params:{creation:15}},
+  fashion1:    {l:'ファッションビジネス能力検定 1級', g:'👗 ファッション', i:'👗', c:'#e04000',
+            d:'ファッション業界のプロ。マネジメント・ブランド戦略まで網羅。',
+            diff:'★★★★☆', period:'4〜6ヶ月', exam:'年2回（7・12月）', cost:'8,800円',
+            links:[{t:'日本ファッション教育振興協会',u:'https://www.japan-fashion.or.jp/'}], req:['fashion2','fashion3'], params:{creation:25}},
+  interior:    {l:'インテリアコーディネーター', g:'🛋️ デザイン', i:'🛋️', c:'#60c0a0',
+            d:'住まいのインテリア提案のプロ。合格率25%前後。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（10月）', cost:'14,850円',
+            links:[{t:'インテリア産業協会',u:'https://www.interior.or.jp/'}], req:[], params:{creation:20,skill:10}},
+  flower:      {l:'フラワーデザイナー', g:'💐 フラワー', i:'💐', c:'#ff80a0',
+            d:'NFD（日本フラワーデザイナー協会）認定。3〜1級がある民間資格。',
+            diff:'★★★☆☆', period:'6ヶ月〜', exam:'随時', cost:'受験料5,000円〜',
+            links:[{t:'NFD',u:'https://www.nfd.or.jp/'}], req:[], params:{creation:15}},
+  nail3:       {l:'ネイリスト技能検定 3級', g:'💅 ネイル', i:'💅', c:'#ffb0d0',
+            d:'ネイルケアの基礎。プロネイリストへの第一歩。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年4回', cost:'9,900円',
+            links:[{t:'JNEC',u:'https://www.nail-kentei.or.jp/'}], req:[], params:{skill:8,creation:5}},
+  nail2:       {l:'ネイリスト技能検定 2級', g:'💅 ネイル', i:'💅', c:'#ff80b0',
+            d:'サロンワーク対応レベル。就職・開業で求められる標準資格。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年4回', cost:'11,000円',
+            links:[{t:'JNEC',u:'https://www.nail-kentei.or.jp/'}], req:['nail3'], params:{skill:15,creation:8}},
+  nail1:       {l:'ネイリスト技能検定 1級', g:'💅 ネイル', i:'💅', c:'#ff4090',
+            d:'トップネイリストの証。アクリルスカルプチュアなど高度な技術。',
+            diff:'★★★★☆', period:'1年以上', exam:'年4回', cost:'13,200円',
+            links:[{t:'JNEC',u:'https://www.nail-kentei.or.jp/'}], req:['nail2','nail3'], params:{skill:25,creation:12}},
+  makeup3:     {l:'メイクアップ技術検定 3級', g:'💄 メイク', i:'💄', c:'#ffa0c0',
+            d:'メイクアップの基礎技術。美容業界への入口。',
+            diff:'★★☆☆☆', period:'1〜2ヶ月', exam:'年2回', cost:'8,800円',
+            links:[{t:'日本エステティック協会',u:'https://www.ajesthe.jp/'}], req:[], params:{skill:5,creation:8}},
+  makeup2:     {l:'メイクアップ技術検定 2級', g:'💄 メイク', i:'💄', c:'#ff70a0',
+            d:'プロレベルのメイク技術。ブライダルや舞台メイクも対応。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年2回', cost:'11,000円',
+            links:[{t:'日本エステティック協会',u:'https://www.ajesthe.jp/'}], req:['makeup3'], params:{skill:10,creation:15}},
+  makeup1:     {l:'メイクアップ技術検定 1級', g:'💄 メイク', i:'💄', c:'#e04080',
+            d:'最高峰のメイク技術。トップアーティストとして活躍できるレベル。',
+            diff:'★★★★☆', period:'1年以上', exam:'年2回', cost:'13,200円',
+            links:[{t:'日本エステティック協会',u:'https://www.ajesthe.jp/'}], req:['makeup2','makeup3'], params:{skill:15,creation:25}},
+};
+
+const TAGS = {
+  'fp3': ['国家', '独学OK', 'CBT随時'],
+  'fp2': ['国家', '独学OK', 'CBT随時'],
+  'afp': ['民間', '独学OK', '随時'],
+  'cfp': ['民間', '独学OK', '年2回'],
+  'shoken': ['民間', '独学OK', 'CBT随時'],
+  'takken': ['国家', '独学OK', '年1回'],
+  'boki3': ['公的', '独学OK', 'CBT随時'],
+  'boki2': ['公的', '独学OK', 'CBT随時'],
+  'zeirishi': ['国家', '独学OK', '年1回'],
+  'kaikei': ['国家', '独学OK', '年1回'],
+  'cma': ['国家', '独学OK', '年1回'],
+  'sharoshi': ['国家', '独学OK', '年1回'],
+  'boki1': ['公的', '独学OK', '年2回'],
+  'fp1': ['国家', '実務経験必要', '年2回'],
+  'gyosei': ['国家', '独学OK', '年1回'],
+  'shihosho': ['国家', '独学OK', '年1回'],
+  'benrishi': ['国家', '独学OK', '年1回'],
+  'bengo': ['国家', '独学OK', '年1回'],
+  'koumuin1': ['公的', '独学OK', '年1回'],
+  'koumuin2': ['公的', '独学OK', '年1回'],
+  'eiyoshi': ['国家', '学校必須', '卒業時取得'],
+  'kanrieiyoshi': ['国家', '実務経験必要', '年1回'],
+  'chori': ['国家', '独学OK', '年1回'],
+  'seika': ['国家', '学校必須', '年1回'],
+  'sommelier': ['民間', '独学OK', '年1回'],
+  'barista': ['民間', '独学OK', '随時'],
+  'shokuhin': ['技能講習', '講習のみ', '随時'],
+  'haccp': ['民間', '独学OK', '随時'],
+  'sake': ['民間', '独学OK', '随時'],
+  'toeic600': ['民間', '独学OK', '年数回'],
+  'toeic800': ['民間', '独学OK', '年数回'],
+  'toeic900': ['民間', '独学OK', '年数回'],
+  'eiken2': ['公的', '独学OK', '年3回'],
+  'eikenPre1': ['公的', '独学OK', '年3回'],
+  'eiken1': ['公的', '独学OK', '年3回'],
+  'hsk3': ['公的', '独学OK', '年数回'],
+  'hsk5': ['公的', '独学OK', '年数回'],
+  'korean3': ['公的', '独学OK', '年2回'],
+  'french': ['公的', '独学OK', '年2回'],
+  'spanish': ['公的', '独学OK', '年2回'],
+  'kanji3':  ['公的', '独学OK', '年3回'],
+  'kanjiPre2':['公的', '独学OK', '年3回'],
+  'kanji2':  ['公的', '独学OK', '年3回'],
+  'kanjiPre1':['公的', '独学OK', '年3回'],
+  'kanji1':  ['公的', '独学OK', '年3回'],
+  'itpass': ['国家', '独学OK', 'CBT随時'],
+  'fg': ['国家', '独学OK', 'CBT随時'],
+  'ap': ['国家', '独学OK', '年2回'],
+  'awsccp': ['民間', '独学OK', 'CBT随時'],
+  'awssaa': ['民間', '独学OK', 'CBT随時'],
+  'gcp': ['民間', '独学OK', 'CBT随時'],
+  'security': ['国家', '独学OK', 'CBT随時'],
+  'gaiq': ['民間', '独学OK', '随時'],
+  'oracle': ['民間', '独学OK', 'CBT随時'],
+  'futsuu': ['運転免許', '学校必須', '随時'],
+  'chugata': ['運転免許', '学校必須', '随時'],
+  'okugata': ['運転免許', '学校必須', '随時'],
+  'nirin': ['運転免許', '学校必須', '随時'],
+  'nirin_ok': ['運転免許', '学校必須', '随時'],
+  'taxi': ['運転免許', '学校必須', '随時'],
+  'forklit': ['技能講習', '講習のみ', '随時'],
+  'crane': ['技能講習', '講習のみ', '随時'],
+  'yacht': ['運転免許', '独学OK', '随時'],
+  'pilot': ['運転免許', '実務経験必要', '随時'],
+  'kango': ['国家', '学校必須', '年1回'],
+  'yakuzai': ['国家', '学校必須', '年1回'],
+  'ishi': ['国家', '学校必須', '年1回'],
+  'kaigo2': ['技能講習', '講習のみ', '随時'],
+  'kaigo': ['国家', '実務経験必要', '年1回'],
+  'sw': ['国家', '学校必須', '年1回'],
+  'trainer': ['民間', '独学OK', 'CBT随時'],
+  'beauty': ['国家', '学校必須', '年2回'],
+  'massage': ['国家', '学校必須', '年1回'],
+  'kenchiku2': ['国家', '独学OK', '年1回'],
+  'kenchiku1': ['国家', '実務経験必要', '年1回'],
+  'kanri': ['国家', '実務経験必要', '年1回'],
+  'setsubi1k': ['国家', '実務経験必要', '年1回'],
+  'mokuzou': ['国家', '独学OK', '年1回'],
+  'kenkan2': ['国家', '独学OK', '年1回'],
+  'kenkan1': ['国家', '実務経験必要', '年2回'],
+  'doboku2': ['国家', '独学OK', '年1回'],
+  'doboku1': ['国家', '実務経験必要', '年2回'],
+  'setsubi2': ['国家', '独学OK', '年1回'],
+  'setsubi1': ['国家', '実務経験必要', '年2回'],
+  'denki2': ['国家', '独学OK', '年2回'],
+  'denki1': ['国家', '実務経験必要', '年2回'],
+  'kanrishi': ['国家', '実務経験必要', '年1回'],
+  'shobo': ['国家', '独学OK', '随時'],
+  'kantei': ['国家', '独学OK', '年2回'],
+  'kanteishi': ['国家', '独学OK', '年1回'],
+  'urban': ['民間', '実務経験必要', '年1回'],
+  'color-uc': ['民間', '独学OK', '年2回'],
+  'color3':   ['民間', '独学OK', '年2回'],
+  'color2':   ['民間', '独学OK', '年2回'],
+  'color1':   ['民間', '独学OK', '年2回'],
+  'color-std':['民間', '独学OK', 'CBT随時'],
+  'color-adv':['民間', '独学OK', 'CBT随時'],
+  'fashion3': ['民間', '独学OK', '年2回'],
+  'fashion2': ['民間', '独学OK', '年2回'],
+  'fashion1': ['民間', '独学OK', '年2回'],
+  'interior': ['民間', '独学OK', '年1回'],
+  'flower':   ['民間', '学校必須', '随時'],
+  'nail3':    ['民間', '独学OK', '年4回'],
+  'nail2':    ['民間', '独学OK', '年4回'],
+  'nail1':    ['民間', '独学OK', '年4回'],
+  'makeup3':  ['民間', '独学OK', '年2回'],
+  'makeup2':  ['民間', '独学OK', '年2回'],
+  'makeup1':  ['民間', '独学OK', '年2回'],
+};
+
+// コネクター更新対象
+const VCONN = {
+  'cv-fp3-fp2':['fp3','fp2'],'cv-fp2-afp':['fp2','afp'],'cv-boki3-2':['boki3','boki2'],
+  'cv-afp-cfp':['afp','cfp'],
+  'cv-t600-800':['toeic600','toeic800'],'cv-t800-900':['toeic800','toeic900'],
+  'cv-e2-pre1':['eiken2','eikenPre1'],'cv-pre1-1':['eikenPre1','eiken1'],
+  'cv-hsk3-5':['hsk3','hsk5'],'cv-itp-fg':['itpass','fg'],'cv-fg-ap':['fg','ap'],
+  'cv-ccp-saa':['awsccp','awssaa'],'cv-fu-chu':['futsuu','chugata'],
+  'cv-chu-ok':['chugata','okugata'],'cv-ni-ok':['nirin','nirin_ok'],
+  // 建築
+  'cv-k2-k1':['kenchiku2','kenchiku1'],'cv-k1-kk':['kenchiku1','kanri'],
+  'cv-kk2-1':['kenkan2','kenkan1'],'cv-dk2-1':['doboku2','doboku1'],
+  'cv-se2-1':['setsubi2','setsubi1'],'cv-de2-1':['denki2','denki1'],
+};
+
+// ===== 状態管理（3状態: null=未着手, 'studying'=勉強中, 'done'=解放済み） =====
+const KEY = 'skilltree_v6';
+let state = {}; // id -> 'studying' | 'done'
+let curId = null;
+let labelTimers = {};
+
+function load(){try{const s=localStorage.getItem(KEY);if(s)state=JSON.parse(s);}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function done(id){return state[id]==='done';}
+function studying(id){return state[id]==='studying';}
+function can(id){
+  if(!SK[id]) return false;
+  // PREREQ_CHAINSがある場合は全前提がdoneであること
+  if(PREREQ_CHAINS[id]){
+    return PREREQ_CHAINS[id].every(r=>done(r));
+  }
+  // req（旧形式）チェック
+  if(SK[id].req && SK[id].req.length>0){
+    return SK[id].req.every(r=>done(r));
+  }
+  return true;
+}
+
+// ===== パラメーター計算 =====
+function calcParams(){
+  const totals={knowledge:0,creation:0,tech:0,skill:0,global:0,mobile:0};
+  Object.entries(SK).forEach(([id,sk])=>{
+    if(!sk.params) return;
+    const mult = done(id)?1:studying(id)?0.4:0;
+    if(mult>0){
+      Object.entries(sk.params).forEach(([p,v])=>{
+        if(totals[p]!==undefined) totals[p]+=v*mult;
+      });
+    }
+  });
+  // 最大値でキャップ（例：100）
+  const MAX=100;
+  Object.keys(totals).forEach(k=>{ totals[k]=Math.round(Math.min(totals[k],MAX)); });
+  return totals;
+}
+
+// ===== レーダーチャート描画 =====
+function drawRadar(){
+  const canvas=document.getElementById('radar');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  if(!ctx) return;
+  const W=canvas.width, H=canvas.height;
+  const cx=W/2, cy=H/2, R=110;
+  const p=calcParams();
+  const keys=Object.keys(PARAMS);
+  const N=keys.length;
+  ctx.clearRect(0,0,W,H);
+
+  // グリッド
+  for(let r=1;r<=4;r++){
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=(i/N)*Math.PI*2-Math.PI/2;
+      const x=cx+Math.cos(a)*R*(r/4);
+      const y=cy+Math.sin(a)*R*(r/4);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='#1a2238';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // 軸線
+  for(let i=0;i<N;i++){
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+    ctx.strokeStyle='#1a2238';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // データ塗り
+  const MAX=100;
+  ctx.beginPath();
+  keys.forEach((k,i)=>{
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    const v=(p[k]/MAX)*R;
+    const x=cx+Math.cos(a)*v;
+    const y=cy+Math.sin(a)*v;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='#f5c84222';ctx.fill();
+  ctx.strokeStyle='#f5c842';ctx.lineWidth=2;ctx.stroke();
+
+  // ラベル
+  keys.forEach((k,i)=>{
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    const lr=R+22;
+    const x=cx+Math.cos(a)*lr;
+    const y=cy+Math.sin(a)*lr;
+    ctx.font='bold 12px Share Tech Mono';
+    ctx.fillStyle=PARAMS[k].color;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(PARAMS[k].icon,x,y-6);
+    ctx.font='bold 9px Noto Sans JP';
+    ctx.fillStyle=PARAMS[k].color+'99';
+    ctx.fillText(PARAMS[k].jlabel,x,y+6);
+  });
+}
+
+// ===== パラメーターバー描画 =====
+function renderParamBars(){
+  const p=calcParams();
+  const container=document.getElementById('paramBars');
+  if(!container) return;
+  container.innerHTML=Object.entries(PARAMS).map(([k,pm])=>`
+    <div class="pbar-row">
+      <div class="pbar-label" style="color:${pm.color}">${pm.icon} ${pm.jlabel}</div>
+      <div class="pbar-track">
+        <div class="pbar-fill" style="width:${p[k]}%;background:${pm.color};box-shadow:0 0 6px ${pm.color}66;"></div>
+      </div>
+      <div class="pbar-val" style="color:${pm.color}">${p[k]}</div>
+    </div>
+  `).join('');
+}
+
+// ===== ランク判定 =====
+function getLevel(){
+  const total=Object.values(calcParams()).reduce((a,b)=>a+b,0);
+  if(total>=400) return {name:'マスター',   desc:'全分野に精通した真の専門家。独立・起業・グローバル展開が現実になる段階。'};
+  if(total>=250) return {name:'エキスパート',desc:'複数分野で高い専門性を持つ。副業・転職・独立が十分に視野に入ってくる。'};
+  if(total>=150) return {name:'プロフェッショナル',desc:'特定分野で確かな実力を持つ。信頼される専門家としての地位が確立されてきた。'};
+  if(total>=80)  return {name:'アドバンスド', desc:'基礎を超えた応用スキルを習得中。強みの軸が見え始めてくる段階。'};
+  if(total>=30)  return {name:'アマチュア',  desc:'学習の習慣がついてきた。最初の資格解放でエンジンがかかりつつある。'};
+  return             {name:'見習い',     desc:'最初の一歩。資格を解放してステータスを育てよう。'};
+}
+
+// ===== 全体レンダリング =====
+function render(){
+  const ids=Object.keys(SK);
+  const total=ids.length, cnt=ids.filter(id=>done(id)).length;
+  const studyCnt=ids.filter(id=>studying(id)).length;
+  document.getElementById('xpFill').style.width=`${(cnt+studyCnt*.3)/total*100}%`;
+  document.getElementById('xpText').textContent=`${cnt}/${total}`;
+
+  ids.forEach(id=>{
+    const el=document.getElementById(`n-${id}`); if(!el) return;
+    el.classList.remove('locked','available','unlocked','studying','just-unlocked');
+
+    // 難易度バッジを初回だけ挿入
+    if(!el.querySelector('.sn-diff') && SK[id]?.diff){
+      const stars = (SK[id].diff.match(/★/g)||[]).length;
+      const dot = stars<=1?'·':stars===2?'··':stars===3?'···':stars===4?'····':'·····';
+      const df = document.createElement('div');
+      df.className='sn-diff';
+      df.textContent='★'.repeat(stars);
+      el.insertBefore(df, el.querySelector('.sn-circle'));
+    }
+
+    const bd=el.querySelector('.sn-badge');
+    if(done(id)){
+      el.classList.add('unlocked');
+      if(bd){bd.textContent='✓';bd.style.color='';}
+    } else if(studying(id)){
+      el.classList.add('studying');
+      if(bd){bd.textContent='📖';bd.style.color='var(--vermilion)';}
+    } else if(can(id)){
+      el.classList.add('available');
+      if(bd){bd.textContent='✦';bd.style.color='';}
+    } else {
+      el.classList.add('locked');
+      if(bd){bd.textContent='🔒';bd.style.color='';}
+    }
+  });
+
+  Object.entries(VCONN).forEach(([vid,[a,b]])=>{
+    const el=document.getElementById(vid);
+    if(el) el.classList.toggle('lit',done(a)&&done(b));
+  });
+
+
+  // パラメーター更新
+  drawRadar();
+  renderParamBars();
+  const lv=getLevel();
+  document.getElementById('levelName').textContent=lv.name;
+  document.getElementById('levelDesc').textContent=lv.desc;
+
+  // 勉強中バナー
+  const studyingIds=Object.keys(SK).filter(id=>studying(id));
+  const banner=document.getElementById('studyingBanner');
+  if(banner){
+    if(studyingIds.length>0){
+      banner.style.display='flex';
+      document.getElementById('studyingNames').textContent=studyingIds.map(id=>SK[id].l).join('・');
+    } else {
+      banner.style.display='none';
+    }
+  }
+
+  // 統計カード
+  const doneCount=Object.keys(SK).filter(id=>done(id)).length;
+  const studyCount=studyingIds.length;
+  const totalCount=Object.keys(SK).length;
+  const sc=document.getElementById('statCards');
+  if(sc) sc.innerHTML=`
+    <div class="stat-card">
+      <div class="stat-card-num" style="color:var(--jade)">${doneCount}</div>
+      <div class="stat-card-label">取得済み</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" style="color:var(--vermilion)">${studyCount}</div>
+      <div class="stat-card-label">勉強中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" style="color:var(--dim)">${totalCount-doneCount-studyCount}</div>
+      <div class="stat-card-label">未着手</div>
+    </div>
+  `;
+}
+
+// ===== タブ切替 =====
+const TABS=['param','money','law','food','lang','it','drive','medical','arch','design'];
+function switchTab(id){
+  TABS.forEach(t=>{
+    document.getElementById(`screen-${t}`).classList.remove('active');
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',TABS[i]===id);
+  });
+  document.getElementById(`screen-${id}`).classList.add('active');
+}
+
+// ===== タップ =====
+function tap(id){
+  curId=id;
+  const el=document.getElementById(`n-${id}`);
+  if(el){
+    el.classList.add('label-visible');
+    clearTimeout(labelTimers[id]);
+    labelTimers[id]=setTimeout(()=>{if(curId!==id)el.classList.remove('label-visible');},2200);
+  }
+  openSheet(id);
+}
+
+function openSheet(id){
+  const sk=SK[id]; if(!sk) return;
+  const sheet=document.getElementById('sheet');
+  const ov=document.getElementById('overlay');
+  sheet.style.setProperty('--sc',sk.c);
+
+  document.getElementById('shIcon').textContent=sk.i;
+  document.getElementById('shName').textContent=sk.l;
+  document.getElementById('shName').style.color=sk.c;
+  document.getElementById('shName').style.textShadow=`0 0 14px ${sk.c}88`;
+  const starCount = (sk.diff.match(/★/g)||[]).length;
+  const starHTML = '<span style="color:#e8b84b">' + '★'.repeat(starCount) + '</span>' +
+                   '<span style="color:#2a3555">★</span>'.repeat(5-starCount);
+  document.getElementById('shDiff').innerHTML = '難易度 ' + starHTML;
+  document.getElementById('shGenre').textContent=sk.g;
+  document.getElementById('shGenre').style.color=sk.c;
+  document.getElementById('shGenre').style.borderColor=sk.c+'44';
+  document.getElementById('shDesc').textContent=sk.d;
+
+  document.getElementById('shMeta').innerHTML=`
+    <div class="mc"><div class="mc-l">勉強期間</div><div class="mc-v">${sk.period}</div></div>
+    <div class="mc"><div class="mc-l">受験費用</div><div class="mc-v">${sk.cost}</div></div>
+    <div class="mc"><div class="mc-l">試験日程</div><div class="mc-v" style="font-size:10px">${sk.exam}</div></div>
+    <div class="mc"><div class="mc-l">状態</div><div class="mc-v" style="color:${done(id)?'var(--jade)':studying(id)?'var(--vermilion)':can(id)?'#e8b84b':'#2a3455'}">${done(id)?'✓ 取得済み':studying(id)?'📖 勉強中':can(id)?'解放可能':'🔒 ロック中'}</div></div>
+  `;
+
+  // タグバッジ
+  const tags = TAGS[id] || [];
+  const tagIcons = {'国家':'🏛️','民間':'🏢','公的':'📋','運転免許':'🚗','技能講習':'🔧','独学OK':'📖','学校必須':'🏫','実務経験必要':'💼','講習のみ':'📝','CBT随時':'🖥️','年1回':'📅','年2回':'📅','年3回':'📅','年数回':'📅','随時':'🗓️','卒業時取得':'🎓','講習受講':'📝'};
+  document.getElementById('shTags').innerHTML = tags.map(t =>
+    `<span class="tag tag-${t}">${tagIcons[t]||''} ${t}</span>`
+  ).join('');
+
+  // ステータス切替バー
+  const canAct = can(id)||done(id)||studying(id);
+  document.getElementById('shStatusBar').innerHTML = canAct ? `
+    <div class="sh-status ${done(id)?'status-done':''}" onclick="setStatus('${id}','done')" style="${done(id)?'':'opacity:.5'}">✓ 取得済み</div>
+    <div class="sh-status ${studying(id)?'status-studying':''}" onclick="setStatus('${id}','studying')" style="${studying(id)?'':'opacity:.5'}">📖 勉強中</div>
+    <div class="sh-status ${!done(id)&&!studying(id)?'status-locked':''}" onclick="setStatus('${id}',null)" style="${!done(id)&&!studying(id)?'':'opacity:.5'}">— 未着手</div>
+  ` : `<div style="font-size:11px;color:var(--dim);padding:4px 0">🔒 前提資格を先に取得してください</div>`;
+
+  // パラメーター貢献バッジ
+  document.getElementById('shContrib').innerHTML=
+    Object.entries(sk.params||{}).map(([p,v])=>
+      `<div class="pc-badge" style="color:${PARAMS[p]?.color||'#aaa'};border-color:${PARAMS[p]?.color||'#aaa'}44">
+        ${PARAMS[p]?.icon||'?'} ${PARAMS[p]?.jlabel||p} +${v}
+      </div>`
+    ).join('');
+
+  document.getElementById('shLinks').innerHTML=(sk.links||[]).map(l=>
+    `<a class="sh-link" href="${l.u}" target="_blank" rel="noopener">🔗 ${l.t}</a>`
+  ).join('');
+
+  const btn=document.getElementById('shBtn');
+  btn.style.setProperty('--sc',sk.c);
+  if(done(id)){btn.textContent='✓ 取得済み — タップで未着手に戻す';btn.className='sh-btn done-btn';}
+  else if(studying(id)){
+    btn.textContent='📖 勉強中 — タップで取得済みにする';
+    btn.className='sh-btn';btn.style.setProperty('--sc','var(--vermilion)');
+  }
+  else if(can(id)){
+    const prereqs = PREREQ_CHAINS[id]||[];
+    const autoList = prereqs.filter(p=>!done(p)).map(p=>SK[p]?.l||p);
+    const note = autoList.length>0 ? `（${autoList.join('・')}も同時解放）` : '';
+    btn.textContent=`⚡ 取得済みにする ${note}`;
+    btn.className='sh-btn';
+  }
+  else{
+    const miss=sk.req.filter(r=>!done(r)).map(r=>SK[r]?.l||r).join('・');
+    btn.textContent=`🔒 先に「${miss}」を取得`;btn.className='sh-btn locked-btn';
+  }
+  ov.classList.add('open');
+  requestAnimationFrame(()=>sheet.classList.add('open'));
+}
+
+function closeSheet(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function doAction(){
+  const id=curId; if(!id) return;
+  if(done(id)){
+    // 取得済み → 未着手（連鎖リセット）
+    cascadeReset(id); toast(`${SK[id].l} を未着手に戻した`);
+  } else if(studying(id)){
+    // 勉強中 → 取得済み
+    doUnlock(id);
+  } else if(can(id)){
+    // 未着手 → 取得済み
+    doUnlock(id);
+  } else return;
+  save(); render(); openSheet(id);
+}
+
+// ステータスバーから直接設定
+function setStatus(id, status){
+  if(status==='done'){
+    if(!can(id)&&!studying(id)&&!done(id)) return;
+    if(done(id)) return;
+    doUnlock(id);
+  } else if(status==='studying'){
+    if(!can(id)&&!done(id)&&!studying(id)) return;
+    if(done(id)){ cascadeReset(id); }
+    state[id]='studying';
+    toast(`📖 ${SK[id].l} を勉強中に設定`);
+  } else {
+    // null → 未着手
+    if(done(id)) cascadeReset(id);
+    else state[id]=undefined;
+  }
+  save(); render(); openSheet(id);
+}
+
+// 上位→下位の逆解放マップを事前生成
+// 「idを解放したとき、自動で解放すべき下位資格」
+// = idがreqに含まれる資格のうち、他のreqが全てdoneなもの…ではなく
+//   「idの系列の直接の前提」= CHAIN定義
+// シンプルに「直接前提チェーン」を定義する
+const PREREQ_CHAINS = {
+  // 簿記: 2→3（簿記2取ったら3も）
+  boki2:    ['boki3'],
+  boki1:    ['boki2','boki3'],
+  // FP: 2→3、AFP→2→3、CFP→AFP→2→3
+  fp2:      ['fp3'],
+  fp1:      ['fp2','fp3'],
+  afp:      ['fp2','fp3'],
+  cfp:      ['afp','fp2','fp3'],
+  // TOEIC
+  toeic800: ['toeic600'],
+  toeic900: ['toeic800','toeic600'],
+  // 英検
+  eikenPre1:['eiken2'],
+  eiken1:   ['eikenPre1','eiken2'],
+  // HSK
+  hsk5:     ['hsk3'],
+  // IT国家
+  fg:       ['itpass'],
+  ap:       ['fg','itpass'],
+  // AWS
+  awssaa:   ['awsccp'],
+  // 運転
+  chugata:  ['futsuu'],
+  okugata:  ['chugata','futsuu'],
+  nirin_ok: ['nirin'],
+  taxi:     ['futsuu'],
+  // 介護
+  kaigo:    ['kaigo2'],
+  // 栄養
+  kanrieiyoshi:['eiyoshi'],
+  kanjiPre2: ['kanji3'],
+  kanji2:    ['kanjiPre2','kanji3'],
+  kanjiPre1: ['kanji2','kanjiPre2','kanji3'],
+  kanji1:    ['kanjiPre1','kanji2','kanjiPre2','kanji3'],
+  // 建築
+  kenchiku1:['kenchiku2'],
+  kanri:    ['kenchiku1','kenchiku2'],
+  setsubi1k:['kenchiku1','kenchiku2'],
+  kenkan1:  ['kenkan2'],
+  doboku1:  ['doboku2'],
+  setsubi1: ['setsubi2'],
+  denki1:   ['denki2'],
+};
+
+function doUnlock(id){
+  // 自分を解放
+  state[id]='done';
+  flashNode(id);
+
+  // 上位資格の場合、下位も自動解放
+  const prereqs = PREREQ_CHAINS[id] || [];
+  const autoUnlocked = [];
+  prereqs.forEach(pid=>{
+    if(!done(pid)){
+      state[pid]=true;
+      flashNode(pid);
+      autoUnlocked.push(SK[pid]?.l||pid);
+    }
+  });
+
+  burst(id);
+  if(autoUnlocked.length>0){
+    toast(`🎉 ${SK[id].l} 解放！（${autoUnlocked.join('・')}も自動解放）`);
+  } else {
+    toast(`🎉 ${SK[id].l} 解放！`);
+  }
+}
+
+function flashNode(id){
+  const el=document.getElementById(`n-${id}`);
+  if(el){el.classList.add('just-unlocked');setTimeout(()=>el.classList.remove('just-unlocked'),700);}
+}
+
+function cascadeReset(id){
+  state[id]=undefined;
+  // 自分を前提とする上位資格も連鎖リセット
+  Object.entries(SK).forEach(([kid,s])=>{if(s.req.includes(id)&&done(kid))cascadeReset(kid);});
+  // PREREQ_CHAINSで自分が下位に含まれる上位もリセット
+  Object.entries(PREREQ_CHAINS).forEach(([upper,lowers])=>{
+    if(lowers.includes(id)&&done(upper)) cascadeReset(upper);
+  });
+}
+
+// パーティクル
+const CM={'var(--c-money)':'#f5c842','var(--c-law)':'#a875ff','var(--c-biz)':'#00d4f0',
+  'var(--c-food)':'#ff6b35','var(--c-restate)':'#50f030','var(--c-lang)':'#ff8800',
+  'var(--c-it)':'#00e5cc','var(--c-labor)':'#ff3d78','var(--c-drive)':'#60c0ff',
+  'var(--c-medical)':'#ff80b0'};
+function gc(c){return CM[c]||c;}
+
+function burst(id){
+  const el=document.getElementById(`n-${id}`); if(!el) return;
+  const r=el.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  const color=gc(SK[id]?.c||'#f5c842');
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const a=(i/14)*Math.PI*2, d=40+Math.random()*60;
+    p.style.cssText=`left:${cx}px;top:${cy}px;width:${3+Math.random()*3}px;height:${3+Math.random()*3}px;background:${color};box-shadow:0 0 5px ${color};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--dur:${.4+Math.random()*.35}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),900);
+  }
+}
+
+let toastT=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// スワイプで閉じる
+(()=>{
+  const sh=document.getElementById('sheet');
+  let sy=0,drag=false;
+  sh.addEventListener('touchstart',e=>{sy=e.touches[0].clientY;drag=true;},{passive:true});
+  sh.addEventListener('touchmove',e=>{if(!drag)return;const dy=e.touches[0].clientY-sy;if(dy>0)sh.style.transform=`translateY(${dy}px)`;},{passive:true});
+  sh.addEventListener('touchend',e=>{if(!drag)return;drag=false;const dy=e.changedTouches[0].clientY-sy;sh.style.transform='';if(dy>70)closeSheet();});
+})();
+
+document.addEventListener('DOMContentLoaded', function(){
+  load(); render();
+});
+</script>
+
+</body>
+</html>
