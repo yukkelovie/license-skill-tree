@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -24,56 +25,56 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
   font-family:'Noto Sans JP',sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none;}
 
 /* 和紙テクスチャ風ノイズ */
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -5%,#e8b84b0d 0%,transparent 55%),
-    radial-gradient(ellipse 40% 60% at 5% 60%,#9b6dff07 0%,transparent 50%),
-    radial-gradient(ellipse 35% 40% at 95% 85%,#00c8e806 0%,transparent 50%);
+body::before{content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;
+background:
+radial-gradient(ellipse 80% 50% at 50% -5%,#e8b84b0d 0%,transparent 55%),
+radial-gradient(ellipse 40% 60% at 5% 60%,#9b6dff07 0%,transparent 50%),
+radial-gradient(ellipse 35% 40% at 95% 85%,#00c8e806 0%,transparent 50%);
 }
 
 /* ===== ヘッダー ===== */
 .header{
-  position:sticky;top:0;z-index:100;
-  padding:14px 16px 10px;
-  background:linear-gradient(180deg,#05070cff 60%,transparent);
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  border-bottom:1px solid #0f182e;
+position:sticky;top:0;z-index:100;
+padding:14px 16px 10px;
+background:linear-gradient(180deg,#05070cff 60%,transparent);
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+border-bottom:1px solid #0f182e;
 }
 .logo{
-  font-family:'Zen Antique Soft',serif;
-  font-size:18px;letter-spacing:.18em;
-  color:var(--gold);
-  text-shadow:0 0 20px #e8b84b44,0 1px 0 #00000088;
-  white-space:nowrap;
+font-family:‘Zen Antique Soft’,serif;
+font-size:18px;letter-spacing:.18em;
+color:var(–gold);
+text-shadow:0 0 20px #e8b84b44,0 1px 0 #00000088;
+white-space:nowrap;
 }
-.logo em{font-style:normal;color:var(--jade);text-shadow:0 0 16px #2dcc8a44;}
+.logo em{font-style:normal;color:var(–jade);text-shadow:0 0 16px #2dcc8a44;}
 .header-right{display:flex;align-items:center;gap:10px;}
 .xp-wrap{display:flex;align-items:center;gap:7px;}
-.xp-label{font-size:9px;color:var(--dim);letter-spacing:.1em;font-family:'Zen Kaku Gothic New',sans-serif;}
-.xp-bar{width:56px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
-.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;
-  transition:width .9s cubic-bezier(.34,1.4,.64,1);box-shadow:0 0 6px var(--gold);}
-.xp-text{font-size:11px;color:var(--gold2);white-space:nowrap;font-weight:700;}
+.xp-label{font-size:9px;color:var(–dim);letter-spacing:.1em;font-family:‘Zen Kaku Gothic New’,sans-serif;}
+.xp-bar{width:56px;height:3px;background:var(–border);border-radius:2px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(–gold),var(–gold2));border-radius:2px;
+transition:width .9s cubic-bezier(.34,1.4,.64,1);box-shadow:0 0 6px var(–gold);}
+.xp-text{font-size:11px;color:var(–gold2);white-space:nowrap;font-weight:700;}
 
 /* ===== タブ ===== */
 .tabs{
-  display:flex;gap:0;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:49px;z-index:99;
-  background:var(--bg);
-  overflow-x:auto;scrollbar-width:none;
+display:flex;gap:0;
+border-bottom:1px solid var(–border);
+position:sticky;top:49px;z-index:99;
+background:var(–bg);
+overflow-x:auto;scrollbar-width:none;
 }
 .tabs::-webkit-scrollbar{display:none;}
 .tab{
-  flex-shrink:0;padding:9px 13px;
-  font-size:11px;font-weight:700;
-  color:var(--dim);cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:all .2s;white-space:nowrap;
-  font-family:'Noto Sans JP',sans-serif;
-  letter-spacing:.02em;
+flex-shrink:0;padding:9px 13px;
+font-size:11px;font-weight:700;
+color:var(–dim);cursor:pointer;
+border-bottom:2px solid transparent;
+transition:all .2s;white-space:nowrap;
+font-family:‘Noto Sans JP’,sans-serif;
+letter-spacing:.02em;
 }
-.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab.active{color:var(–gold);border-bottom-color:var(–gold);}
 
 /* ===== パラメーター画面 ===== */
 .param-screen{display:none;padding:20px 14px 140px;position:relative;z-index:1;}
@@ -81,11 +82,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 .param-title{text-align:center;margin-bottom:20px;}
 .param-title h2{
-  font-family:'Zen Antique Soft',serif;
-  font-size:15px;letter-spacing:.3em;
-  color:var(--gold);text-shadow:0 0 16px #e8b84b44;
+font-family:‘Zen Antique Soft’,serif;
+font-size:15px;letter-spacing:.3em;
+color:var(–gold);text-shadow:0 0 16px #e8b84b44;
 }
-.param-title p{font-size:10px;color:var(--dim);margin-top:4px;letter-spacing:.06em;}
+.param-title p{font-size:10px;color:var(–dim);margin-top:4px;letter-spacing:.06em;}
 
 .radar-wrap{display:flex;justify-content:center;margin-bottom:22px;}
 canvas#radar{display:block;}
@@ -93,302 +94,302 @@ canvas#radar{display:block;}
 .param-bars{display:flex;flex-direction:column;gap:11px;}
 .pbar-row{display:flex;align-items:center;gap:10px;}
 .pbar-label{font-size:11px;font-weight:900;min-width:60px;letter-spacing:.02em;}
-.pbar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.pbar-track{flex:1;height:6px;background:var(–border);border-radius:3px;overflow:hidden;}
 .pbar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.34,1.2,.64,1);}
-.pbar-val{font-size:10px;color:var(--dim);min-width:28px;text-align:right;font-weight:700;}
+.pbar-val{font-size:10px;color:var(–dim);min-width:28px;text-align:right;font-weight:700;}
 
 .param-level{
-  text-align:center;margin-top:24px;padding:18px 16px;
-  background:linear-gradient(135deg,#0d1019,#101520);
-  border:1px solid var(--gold-dim);border-radius:16px;
-  position:relative;overflow:hidden;
+text-align:center;margin-top:24px;padding:18px 16px;
+background:linear-gradient(135deg,#0d1019,#101520);
+border:1px solid var(–gold-dim);border-radius:16px;
+position:relative;overflow:hidden;
 }
 .param-level::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 0%,#e8b84b0a 0%,transparent 70%);
-  pointer-events:none;
+content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 80% 60% at 50% 0%,#e8b84b0a 0%,transparent 70%);
+pointer-events:none;
 }
-.level-label{font-size:9px;letter-spacing:.25em;color:var(--dim);margin-bottom:8px;font-weight:700;}
-.level-name{font-size:22px;font-weight:900;color:var(--gold);text-shadow:0 0 20px #e8b84b55;
-  font-family:'Zen Antique Soft',serif;letter-spacing:.1em;}
+.level-label{font-size:9px;letter-spacing:.25em;color:var(–dim);margin-bottom:8px;font-weight:700;}
+.level-name{font-size:22px;font-weight:900;color:var(–gold);text-shadow:0 0 20px #e8b84b55;
+font-family:‘Zen Antique Soft’,serif;letter-spacing:.1em;}
 .level-desc{font-size:11px;color:#5a6a88;margin-top:8px;line-height:1.7;}
 
 /* 統計カード */
 .stat-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px;}
 .stat-card{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:12px 8px;text-align:center;
+background:var(–panel);border:1px solid var(–border);
+border-radius:12px;padding:12px 8px;text-align:center;
 }
-.stat-card-num{font-size:20px;font-weight:900;color:var(--gold);}
-.stat-card-label{font-size:9px;color:var(--dim);margin-top:3px;letter-spacing:.05em;}
+.stat-card-num{font-size:20px;font-weight:900;color:var(–gold);}
+.stat-card-label{font-size:9px;color:var(–dim);margin-top:3px;letter-spacing:.05em;}
 
 /* 勉強中バナー */
 .studying-banner{
-  background:linear-gradient(135deg,#1a1200,#120e00);
-  border:1px solid #3a2a00;border-radius:12px;
-  padding:12px 14px;margin-bottom:20px;
-  display:flex;align-items:center;gap:10px;
+background:linear-gradient(135deg,#1a1200,#120e00);
+border:1px solid #3a2a00;border-radius:12px;
+padding:12px 14px;margin-bottom:20px;
+display:flex;align-items:center;gap:10px;
 }
 .studying-banner-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--gold);box-shadow:0 0 8px var(--gold);
-  animation:studyPulse 1.5s ease-in-out infinite;flex-shrink:0;
+width:8px;height:8px;border-radius:50%;
+background:var(–gold);box-shadow:0 0 8px var(–gold);
+animation:studyPulse 1.5s ease-in-out infinite;flex-shrink:0;
 }
 @keyframes studyPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
 .studying-banner-text{font-size:11px;color:#a08040;line-height:1.6;}
-.studying-banner-text strong{color:var(--gold);font-weight:900;}
+.studying-banner-text strong{color:var(–gold);font-weight:900;}
 
 /* ===== ツリー画面 ===== */
 .tree-screen{display:none;position:relative;z-index:1;padding-bottom:140px;}
 .tree-screen.active{display:block;}
 
 .sec-head{
-  font-size:9px;letter-spacing:.22em;color:var(--dim);
-  text-align:center;padding:20px 4px 12px;
-  display:flex;align-items:center;gap:8px;justify-content:center;
-  font-weight:700;
+font-size:9px;letter-spacing:.22em;color:var(–dim);
+text-align:center;padding:20px 4px 12px;
+display:flex;align-items:center;gap:8px;justify-content:center;
+font-weight:700;
 }
-.sec-head::before,.sec-head::after{content:'';flex:1;height:1px;
-  background:linear-gradient(90deg,transparent,var(--border));max-width:50px;}
-.sec-head::after{background:linear-gradient(90deg,var(--border),transparent);}
+.sec-head::before,.sec-head::after{content:’’;flex:1;height:1px;
+background:linear-gradient(90deg,transparent,var(–border));max-width:50px;}
+.sec-head::after{background:linear-gradient(90deg,var(–border),transparent);}
 
 .tree-wrap{padding:0 10px;}
 .node-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:2px;}
 
 /* ===== ノード ===== */
 .sn{position:relative;width:56px;display:flex;flex-direction:column;
-  align-items:center;cursor:pointer;touch-action:manipulation;gap:4px;
-  overflow:visible;}
+align-items:center;cursor:pointer;touch-action:manipulation;gap:4px;
+overflow:visible;}
 .sn-circle{
-  width:52px;height:52px;border-radius:50%;
-  border:2px solid var(--border);
-  background:var(--bg2);
-  display:flex;align-items:center;justify-content:center;font-size:21px;
-  position:relative;overflow:visible;
-  transition:all .3s cubic-bezier(.34,1.2,.64,1);flex-shrink:0;
+width:52px;height:52px;border-radius:50%;
+border:2px solid var(–border);
+background:var(–bg2);
+display:flex;align-items:center;justify-content:center;font-size:21px;
+position:relative;overflow:visible;
+transition:all .3s cubic-bezier(.34,1.2,.64,1);flex-shrink:0;
 }
 /* 光沢 */
-.sn-circle::before{content:'';position:absolute;inset:0;border-radius:50%;
-  background:linear-gradient(135deg,#ffffff0c 0%,transparent 55%);pointer-events:none;}
+.sn-circle::before{content:’’;position:absolute;inset:0;border-radius:50%;
+background:linear-gradient(135deg,#ffffff0c 0%,transparent 55%);pointer-events:none;}
 /* タップリップル */
-.sn-circle::after{content:'';position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle,#ffffff1e 0%,transparent 70%);
-  opacity:0;transition:opacity .2s;pointer-events:none;}
+.sn-circle::after{content:’’;position:absolute;inset:0;border-radius:50%;
+background:radial-gradient(circle,#ffffff1e 0%,transparent 70%);
+opacity:0;transition:opacity .2s;pointer-events:none;}
 .sn:active .sn-circle::after{opacity:1;}
 
 /* ロック */
 .sn.locked .sn-circle{border-color:#2a3a58;background:#0d1628;filter:grayscale(1);opacity:.65;}
 /* 解放可能 */
 .sn.available .sn-circle{
-  border-color:#4a5a90;background:#0f1830;
-  animation:availPulse 2.8s ease-in-out infinite;
+border-color:#4a5a90;background:#0f1830;
+animation:availPulse 2.8s ease-in-out infinite;
 }
 @keyframes availPulse{
-  0%,100%{border-color:#252e50;box-shadow:none;}
-  50%{border-color:#353e68;box-shadow:0 0 12px #353e6840;}
+0%,100%{border-color:#252e50;box-shadow:none;}
+50%{border-color:#353e68;box-shadow:0 0 12px #353e6840;}
 }
 /* 解放済み */
 .sn.unlocked .sn-circle{
-  border-color:#2dff90;
-  border-width:3px;
-  background:#071a0f;
-  box-shadow:0 0 0 2px #1a4d30, inset 0 0 10px #2dff9018;
+border-color:#2dff90;
+border-width:3px;
+background:#071a0f;
+box-shadow:0 0 0 2px #1a4d30, inset 0 0 10px #2dff9018;
 }
 /* 勉強中 */
 .sn.studying .sn-circle{
-  border-color:#ff4444 !important;
-  border-width:3px !important;
-  background:#180808 !important;
-  box-shadow:0 0 0 2px #4a1010, 0 0 20px #ff444460 !important;
-  animation:studyRing 1.6s ease-in-out infinite !important;
+border-color:#ff4444 !important;
+border-width:3px !important;
+background:#180808 !important;
+box-shadow:0 0 0 2px #4a1010, 0 0 20px #ff444460 !important;
+animation:studyRing 1.6s ease-in-out infinite !important;
 }
 @keyframes studyRing{
-  0%,100%{box-shadow:0 0 0 2px #4a1010, 0 0 14px #ff444450;}
-  50%{box-shadow:0 0 0 2px #7a1818, 0 0 28px #ff4444a0, inset 0 0 12px #ff444420;}
+0%,100%{box-shadow:0 0 0 2px #4a1010, 0 0 14px #ff444450;}
+50%{box-shadow:0 0 0 2px #7a1818, 0 0 28px #ff4444a0, inset 0 0 12px #ff444420;}
 }
 @keyframes studyRing{
-  0%,100%{box-shadow:0 0 0 0 var(--vermilion),0 0 10px #e8404030;}
-  50%{box-shadow:0 0 0 3px transparent,0 0 20px #e8404055;}
+0%,100%{box-shadow:0 0 0 0 var(–vermilion),0 0 10px #e8404030;}
+50%{box-shadow:0 0 0 3px transparent,0 0 20px #e8404055;}
 }
 /* NOW PLAYING（現在進行中の最優先資格） */
 .sn.now-playing .sn-circle{animation:npRing 1.8s ease-in-out infinite;}
 @keyframes npRing{
-  0%,100%{box-shadow:0 0 0 0 var(--nc,var(--gold)),0 0 12px var(--ng,#e8b84b33);}
-  50%{box-shadow:0 0 0 4px transparent,0 0 24px var(--ng,#e8b84b55);}
+0%,100%{box-shadow:0 0 0 0 var(–nc,var(–gold)),0 0 12px var(–ng,#e8b84b33);}
+50%{box-shadow:0 0 0 4px transparent,0 0 24px var(–ng,#e8b84b55);}
 }
 @keyframes unlockBurst{
-  0%{transform:scale(1);}
-  25%{transform:scale(1.22);box-shadow:0 0 36px var(--nc,var(--gold)),0 0 72px var(--ng,#e8b84b66);}
-  100%{transform:scale(1);}
+0%{transform:scale(1);}
+25%{transform:scale(1.22);box-shadow:0 0 36px var(–nc,var(–gold)),0 0 72px var(–ng,#e8b84b66);}
+100%{transform:scale(1);}
 }
 .sn.just-unlocked .sn-circle{animation:unlockBurst .75s ease-out forwards;}
 
 /* 難易度バッジ（上中央・circle外に重なる） */
 .sn-diff{
-  position:absolute;top:-8px;left:50%;
-  transform:translateX(-50%);
-  background:#05070c;border:1px solid #2a3555;
-  border-radius:10px;padding:2px 5px;
-  font-size:7px;line-height:1.4;
-  color:#e8b84b;letter-spacing:.5px;
-  white-space:nowrap;z-index:10;
-  transition:opacity .3s;
-  text-align:center;
+position:absolute;top:-8px;left:50%;
+transform:translateX(-50%);
+background:#05070c;border:1px solid #2a3555;
+border-radius:10px;padding:2px 5px;
+font-size:7px;line-height:1.4;
+color:#e8b84b;letter-spacing:.5px;
+white-space:nowrap;z-index:10;
+transition:opacity .3s;
+text-align:center;
 }
 .sn.locked .sn-diff{opacity:.3;}
 
 /* バッジ（右下） */
 .sn-badge{
-  position:absolute;bottom:-1px;right:-1px;
-  width:17px;height:17px;border-radius:50%;
-  background:var(--bg);border:1.5px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:8px;transition:all .3s;
+position:absolute;bottom:-1px;right:-1px;
+width:17px;height:17px;border-radius:50%;
+background:var(–bg);border:1.5px solid var(–border);
+display:flex;align-items:center;justify-content:center;
+font-size:8px;transition:all .3s;
 }
-.sn.unlocked .sn-badge{background:#0c1018;border-color:var(--nc,var(--gold));color:var(--gold);}
-.sn.studying .sn-badge{background:#180808;border-color:var(--vermilion);color:var(--vermilion);}
+.sn.unlocked .sn-badge{background:#0c1018;border-color:var(–nc,var(–gold));color:var(–gold);}
+.sn.studying .sn-badge{background:#180808;border-color:var(–vermilion);color:var(–vermilion);}
 
 /* ラベル（タップで表示） */
 .sn-label{
-  font-size:8px;font-weight:700;color:var(--dim);
-  letter-spacing:.02em;text-align:center;line-height:1.25;
-  max-width:60px;min-height:20px;
-  opacity:1;
-  transition:color .3s;
-  pointer-events:none;
+font-size:8px;font-weight:700;color:var(–dim);
+letter-spacing:.02em;text-align:center;line-height:1.25;
+max-width:60px;min-height:20px;
+opacity:1;
+transition:color .3s;
+pointer-events:none;
 }
-.sn.unlocked .sn-label{color:var(--nc,var(--gold));}
-.sn.studying .sn-label{color:var(--vermilion);}
+.sn.unlocked .sn-label{color:var(–nc,var(–gold));}
+.sn.studying .sn-label{color:var(–vermilion);}
 .sn.available .sn-label{color:#404e78;}
 .sn.locked .sn-label{color:#4a5f88;}
 
 /* コネクター */
 .conn-v{width:2px;border-radius:1px;background:#3a5080;transition:background .5s,box-shadow .5s;}
-.conn-v.lit{background:var(--gold);box-shadow:0 0 6px #e8b84b55;}
+.conn-v.lit{background:var(–gold);box-shadow:0 0 6px #e8b84b55;}
 /* FP分岐用インラインdivへのlit対応 */
-#cv-fp2-afp.lit,#ch-fp2-l.lit{background:var(--gold) !important;box-shadow:0 0 5px #e8b84b55;}
-.conn-h{height:2px;flex:1;min-width:8px;border-radius:1px;background:var(--border);
-  transition:background .5s,box-shadow .5s;}
-.conn-h.lit{background:var(--gold);box-shadow:0 0 5px #e8b84b55;}
+#cv-fp2-afp.lit,#ch-fp2-l.lit{background:var(–gold) !important;box-shadow:0 0 5px #e8b84b55;}
+.conn-h{height:2px;flex:1;min-width:8px;border-radius:1px;background:var(–border);
+transition:background .5s,box-shadow .5s;}
+.conn-h.lit{background:var(–gold);box-shadow:0 0 5px #e8b84b55;}
 .v-row{display:flex;justify-content:center;}
 .v-row .conn-v{height:28px;}
 .branch-row{display:flex;align-items:flex-end;height:28px;}
 
 /* パーティクル */
 .particle{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;
-  animation:pfly var(--dur,.65s) ease-out forwards;}
-@keyframes pfly{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}}
+animation:pfly var(–dur,.65s) ease-out forwards;}
+@keyframes pfly{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(–dx),var(–dy)) scale(0);opacity:0;}}
 
 /* ===== ボトムシート ===== */
 .overlay{position:fixed;inset:0;z-index:200;background:#000000a0;opacity:0;pointer-events:none;
-  transition:opacity .28s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+transition:opacity .28s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .overlay.open{opacity:1;pointer-events:all;}
 .sheet{
-  position:fixed;left:0;right:0;bottom:0;z-index:201;
-  background:linear-gradient(180deg,#0e1120 0%,#0a0d18 100%);
-  border-top:1px solid var(--border);
-  border-radius:22px 22px 0 0;
-  padding:0 0 calc(16px + var(--safe-bottom));
-  transform:translateY(100%);
-  transition:transform .4s cubic-bezier(.34,1.05,.64,1);
-  max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
+position:fixed;left:0;right:0;bottom:0;z-index:201;
+background:linear-gradient(180deg,#0e1120 0%,#0a0d18 100%);
+border-top:1px solid var(–border);
+border-radius:22px 22px 0 0;
+padding:0 0 calc(16px + var(–safe-bottom));
+transform:translateY(100%);
+transition:transform .4s cubic-bezier(.34,1.05,.64,1);
+max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
 }
 .sheet.open{transform:translateY(0);}
 .sheet-handle{width:32px;height:4px;background:#1a2238;border-radius:2px;margin:12px auto 0;}
 
 .sh-head{
-  display:flex;align-items:center;gap:12px;padding:14px 18px 12px;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;
-  background:linear-gradient(180deg,#0e1120 80%,transparent);
-  z-index:1;
+display:flex;align-items:center;gap:12px;padding:14px 18px 12px;
+border-bottom:1px solid var(–border);
+position:sticky;top:0;
+background:linear-gradient(180deg,#0e1120 80%,transparent);
+z-index:1;
 }
 .sh-icon{font-size:28px;flex-shrink:0;}
 .sh-titles{flex:1;min-width:0;}
 .sh-name{font-size:17px;font-weight:900;line-height:1.2;
-  font-family:'Zen Kaku Gothic New',sans-serif;letter-spacing:.02em;}
-.sh-diff{font-size:10px;color:var(--dim);margin-top:2px;letter-spacing:.05em;}
+font-family:‘Zen Kaku Gothic New’,sans-serif;letter-spacing:.02em;}
+.sh-diff{font-size:10px;color:var(–dim);margin-top:2px;letter-spacing:.05em;}
 .sh-genre{
-  display:inline-flex;align-items:center;gap:3px;
-  background:#0a0e1a;border:1px solid var(--border);
-  border-radius:20px;padding:4px 10px;font-size:9px;
-  font-weight:700;flex-shrink:0;letter-spacing:.04em;
+display:inline-flex;align-items:center;gap:3px;
+background:#0a0e1a;border:1px solid var(–border);
+border-radius:20px;padding:4px 10px;font-size:9px;
+font-weight:700;flex-shrink:0;letter-spacing:.04em;
 }
 
 .sh-body{padding:14px 18px;}
 
 /* ステータスバッジ（シートの上部） */
 .sh-status-bar{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  margin-bottom:14px;
+display:flex;align-items:center;justify-content:center;gap:8px;
+margin-bottom:14px;
 }
 .sh-status{
-  display:flex;align-items:center;gap:5px;
-  border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;
-  border:1px solid;cursor:pointer;transition:all .2s;
-  -webkit-tap-highlight-color:transparent;
+display:flex;align-items:center;gap:5px;
+border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;
+border:1px solid;cursor:pointer;transition:all .2s;
+-webkit-tap-highlight-color:transparent;
 }
-.sh-status.status-done{border-color:var(--jade);color:var(--jade);background:#001810;}
-.sh-status.status-studying{border-color:var(--vermilion);color:var(--vermilion);background:#180808;}
-.sh-status.status-locked{border-color:var(--dim);color:var(--dim);background:transparent;}
+.sh-status.status-done{border-color:var(–jade);color:var(–jade);background:#001810;}
+.sh-status.status-studying{border-color:var(–vermilion);color:var(–vermilion);background:#180808;}
+.sh-status.status-locked{border-color:var(–dim);color:var(–dim);background:transparent;}
 .sh-status:active{opacity:.7;}
 
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;}
-.mc{background:#090c16;border:1px solid var(--border);border-radius:10px;padding:9px 11px;}
-.mc-l{font-size:8px;color:var(--dim);letter-spacing:.15em;margin-bottom:3px;font-weight:700;}
+.mc{background:#090c16;border:1px solid var(–border);border-radius:10px;padding:9px 11px;}
+.mc-l{font-size:8px;color:var(–dim);letter-spacing:.15em;margin-bottom:3px;font-weight:700;}
 .mc-v{font-size:11px;font-weight:700;color:#5a7090;}
 
-.ss-title{font-size:9px;letter-spacing:.18em;color:var(--dim);margin-bottom:7px;font-weight:700;}
+.ss-title{font-size:9px;letter-spacing:.18em;color:var(–dim);margin-bottom:7px;font-weight:700;}
 .ss-body{font-size:12px;line-height:1.85;color:#6878a0;margin-bottom:14px;}
 
-.sh-link{display:flex;align-items:center;gap:8px;background:#090c16;border:1px solid var(--border);
-  border-radius:9px;padding:10px 12px;text-decoration:none;color:var(--c-biz);font-size:11px;
-  margin-bottom:7px;font-weight:700;}
+.sh-link{display:flex;align-items:center;gap:8px;background:#090c16;border:1px solid var(–border);
+border-radius:9px;padding:10px 12px;text-decoration:none;color:var(–c-biz);font-size:11px;
+margin-bottom:7px;font-weight:700;}
 .sh-link:active{background:#081420;}
 
 .param-contrib{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
 .pc-badge{display:flex;align-items:center;gap:4px;background:#090c16;border:1px solid;
-  border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;}
+border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;}
 
 /* アクションボタン */
 .sh-btn{
-  margin:6px 18px 0;width:calc(100% - 36px);
-  padding:15px;border-radius:14px;
-  border:2px solid var(--sc,var(--gold));
-  background:transparent;color:var(--sc,var(--gold));
-  font-size:13px;font-weight:900;
-  font-family:'Noto Sans JP',sans-serif;letter-spacing:.06em;
-  cursor:pointer;transition:all .2s;
-  text-shadow:0 0 12px var(--sc,var(--gold));
-  -webkit-tap-highlight-color:transparent;display:block;
+margin:6px 18px 0;width:calc(100% - 36px);
+padding:15px;border-radius:14px;
+border:2px solid var(–sc,var(–gold));
+background:transparent;color:var(–sc,var(–gold));
+font-size:13px;font-weight:900;
+font-family:‘Noto Sans JP’,sans-serif;letter-spacing:.06em;
+cursor:pointer;transition:all .2s;
+text-shadow:0 0 12px var(–sc,var(–gold));
+-webkit-tap-highlight-color:transparent;display:block;
 }
-.sh-btn:active{background:var(--sc,var(--gold));color:#05070c;text-shadow:none;
-  box-shadow:0 0 28px var(--sc,var(--gold));}
+.sh-btn:active{background:var(–sc,var(–gold));color:#05070c;text-shadow:none;
+box-shadow:0 0 28px var(–sc,var(–gold));}
 .sh-btn.locked-btn{border-color:#16213a;color:#252e48;text-shadow:none;cursor:default;}
-.sh-btn.done-btn{border-color:var(--jade);color:var(--jade);text-shadow:0 0 10px var(--jade);}
-.sh-btn.done-btn:active{background:var(--jade);color:#05070c;text-shadow:none;}
+.sh-btn.done-btn{border-color:var(–jade);color:var(–jade);text-shadow:0 0 10px var(–jade);}
+.sh-btn.done-btn:active{background:var(–jade);color:#05070c;text-shadow:none;}
 
 /* トースト */
 .toast{
-  position:fixed;bottom:72px;left:50%;
-  transform:translateX(-50%) translateY(12px);
-  background:#0e1120;border:1px solid var(--gold);
-  border-radius:24px;padding:10px 22px;
-  font-size:12px;font-weight:700;color:var(--gold);
-  box-shadow:0 0 24px #e8b84b40;
-  opacity:0;pointer-events:none;z-index:9999;
-  transition:all .34s cubic-bezier(.34,1.4,.64,1);
-  white-space:nowrap;max-width:88vw;text-align:center;
+position:fixed;bottom:72px;left:50%;
+transform:translateX(-50%) translateY(12px);
+background:#0e1120;border:1px solid var(–gold);
+border-radius:24px;padding:10px 22px;
+font-size:12px;font-weight:700;color:var(–gold);
+box-shadow:0 0 24px #e8b84b40;
+opacity:0;pointer-events:none;z-index:9999;
+transition:all .34s cubic-bezier(.34,1.4,.64,1);
+white-space:nowrap;max-width:88vw;text-align:center;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ===== タグバッジ ===== */
 .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
 .tag{
-  display:inline-flex;align-items:center;gap:3px;
-  border-radius:20px;padding:4px 10px;
-  font-size:9px;font-weight:700;letter-spacing:.04em;
-  border:1px solid;
+display:inline-flex;align-items:center;gap:3px;
+border-radius:20px;padding:4px 10px;
+font-size:9px;font-weight:700;letter-spacing:.04em;
+border:1px solid;
 }
 /* 資格種別 */
 .tag-国家  {color:#e8b84b;border-color:#e8b84b55;background:#1a1400;}
@@ -411,6 +412,7 @@ canvas#radar{display:block;}
 .tag-卒業時取得{color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
 .tag-講習受講{color:#c0c0c0;border-color:#c0c0c033;background:#111520;}
 </style>
+
 </head>
 <body>
 
@@ -426,6 +428,7 @@ canvas#radar{display:block;}
 </header>
 
 <!-- タブ -->
+
 <div class="tabs">
   <div class="tab active" onclick="switchTab('param')">📊 ステータス</div>
   <div class="tab" onclick="switchTab('money')">💰 マネー・FP</div>
@@ -440,6 +443,7 @@ canvas#radar{display:block;}
 </div>
 
 <!-- ===== パラメーター画面 ===== -->
+
 <div class="param-screen active" id="screen-param">
   <div class="param-title">
     <h2>ステータス</h2>
@@ -460,6 +464,7 @@ canvas#radar{display:block;}
 </div>
 
 <!-- ===== マネー・FP ===== -->
+
 <div class="tree-screen" id="screen-money">
 <div class="tree-wrap">
 
@@ -520,9 +525,34 @@ canvas#radar{display:block;}
     <div class="sn available" id="n-sharoshi" style="--nc:var(--c-labor);--ng:#ff3d7840" onclick="tap('sharoshi')">
       <div class="sn-circle">👔<div class="sn-badge">✦</div></div><div class="sn-label">社労士</div></div>
   </div>
+
+  <div class="sec-head">テクニカルアナリスト</div>
+  <div class="node-row" style="align-items:flex-start;gap:20px;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-cmta3" style="--nc:#60d8ff;--ng:#60d8ff40" onclick="tap('cmta3')">
+        <div class="sn-circle">📉<div class="sn-badge">✦</div></div><div class="sn-label">CMTA 1次</div></div>
+      <div class="conn-v" id="cv-cmta3-2" style="height:22px;"></div>
+      <div class="sn available" id="n-cmta2" style="--nc:#40b8f0;--ng:#40b8f040" onclick="tap('cmta2')">
+        <div class="sn-circle">📉<div class="sn-badge">✦</div></div><div class="sn-label">CMTA 2次</div></div>
+      <div class="conn-v" id="cv-cmta2-1" style="height:22px;"></div>
+      <div class="sn available" id="n-cmta1" style="--nc:#2090d0;--ng:#2090d040" onclick="tap('cmta1')">
+        <div class="sn-circle">📉<div class="sn-badge">✦</div></div><div class="sn-label">CMTA 3次</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="sn available" id="n-cfte1" style="--nc:#a060ff;--ng:#a060ff40" onclick="tap('cfte1')">
+        <div class="sn-circle">🌐<div class="sn-badge">✦</div></div><div class="sn-label">CFTe I</div></div>
+      <div class="conn-v" id="cv-cfte1-2" style="height:22px;"></div>
+      <div class="sn available" id="n-cfte2" style="--nc:#8040e0;--ng:#8040e040" onclick="tap('cfte2')">
+        <div class="sn-circle">🌐<div class="sn-badge">✦</div></div><div class="sn-label">CFTe II</div></div>
+      <div class="conn-v" id="cv-cfte2-mfta" style="height:22px;"></div>
+      <div class="sn available" id="n-mfta" style="--nc:#6020c0;--ng:#6020c040" onclick="tap('mfta')">
+        <div class="sn-circle">🏆<div class="sn-badge">✦</div></div><div class="sn-label">MFTA</div></div>
+    </div>
+  </div>
 </div></div>
 
 <!-- ===== 法律 ===== -->
+
 <div class="tree-screen" id="screen-law">
 <div class="tree-wrap">
   <div class="sec-head">法律</div>
@@ -546,6 +576,7 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- ===== 食品・調理 ===== -->
+
 <div class="tree-screen" id="screen-food">
 <div class="tree-wrap">
   <div class="sec-head">食品・栄養</div>
@@ -578,68 +609,75 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- ===== 語学 ===== -->
+
 <div class="tree-screen" id="screen-lang">
 <div class="tree-wrap">
   <div class="sec-head">英語</div>
-  <div class="node-row">
+  <div class="node-row" style="align-items:flex-start;gap:20px;">
     <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-      <div class="sn locked" id="n-toeic600" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('toeic600')">
-        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 600</div></div>
+      <div class="sn available" id="n-toeic600" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('toeic600')">
+        <div class="sn-circle">🌐<div class="sn-badge">✦</div></div><div class="sn-label">TOEIC 600</div></div>
       <div class="conn-v" id="cv-t600-800" style="height:22px;"></div>
       <div class="sn available" id="n-toeic800" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('toeic800')">
-        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 800</div></div>
+        <div class="sn-circle">🌐<div class="sn-badge">✦</div></div><div class="sn-label">TOEIC 800</div></div>
       <div class="conn-v" id="cv-t800-900" style="height:22px;"></div>
       <div class="sn available" id="n-toeic900" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('toeic900')">
-        <div class="sn-circle">🌐<div class="sn-badge">🔒</div></div><div class="sn-label">TOEIC 900+</div></div>
+        <div class="sn-circle">🌐<div class="sn-badge">✦</div></div><div class="sn-label">TOEIC 900+</div></div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-      <div class="sn locked" id="n-eiken2" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('eiken2')">
-        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 2級</div></div>
+      <div class="sn available" id="n-eiken2" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('eiken2')">
+        <div class="sn-circle">🔤<div class="sn-badge">✦</div></div><div class="sn-label">英検 2級</div></div>
       <div class="conn-v" id="cv-e2-pre1" style="height:22px;"></div>
       <div class="sn available" id="n-eikenPre1" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('eikenPre1')">
-        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 準1級</div></div>
+        <div class="sn-circle">🔤<div class="sn-badge">✦</div></div><div class="sn-label">英検 準1級</div></div>
       <div class="conn-v" id="cv-pre1-1" style="height:22px;"></div>
       <div class="sn available" id="n-eiken1" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('eiken1')">
-        <div class="sn-circle">🔤<div class="sn-badge">🔒</div></div><div class="sn-label">英検 1級</div></div>
-    </div>
-  </div>
-  <div class="sec-head">中国語</div>
-  <div class="node-row">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-      <div class="sn locked" id="n-hsk3" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('hsk3')">
-        <div class="sn-circle">🀄<div class="sn-badge">🔒</div></div><div class="sn-label">HSK 3級</div></div>
-      <div class="conn-v" id="cv-hsk3-5" style="height:22px;"></div>
-      <div class="sn available" id="n-hsk5" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('hsk5')">
-        <div class="sn-circle">🀄<div class="sn-badge">🔒</div></div><div class="sn-label">HSK 5級</div></div>
+        <div class="sn-circle">🔤<div class="sn-badge">✦</div></div><div class="sn-label">英検 1級</div></div>
     </div>
   </div>
   <div class="sec-head">その他の語学</div>
-  <div class="node-row">
-    <div class="sn locked" id="n-korean3" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('korean3')">
-      <div class="sn-circle">🇰🇷<div class="sn-badge">🔒</div></div><div class="sn-label">韓国語 3級</div></div>
-    <div class="sn locked" id="n-french" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('french')">
-      <div class="sn-circle">🇫🇷<div class="sn-badge">🔒</div></div><div class="sn-label">仏検 3級</div></div>
-    <div class="sn locked" id="n-spanish" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('spanish')">
-      <div class="sn-circle">🇪🇸<div class="sn-badge">🔒</div></div><div class="sn-label">西検 3級</div></div>
+  <div style="display:flex;justify-content:center;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="sn available" id="n-hsk3" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('hsk3')">
+        <div class="sn-circle">🀄<div class="sn-badge">✦</div></div><div class="sn-label">HSK 3級</div></div>
+      <div class="conn-v" id="cv-hsk3-4" style="height:28px;"></div>
+      <div class="sn available" id="n-hsk4" style="--nc:#ff9840;--ng:#ff984040" onclick="tap('hsk4')">
+        <div class="sn-circle">🀄<div class="sn-badge">✦</div></div><div class="sn-label">HSK 4級</div></div>
+      <div class="conn-v" id="cv-hsk4-5" style="height:28px;"></div>
+      <div class="sn available" id="n-hsk5" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('hsk5')">
+        <div class="sn-circle">🀄<div class="sn-badge">✦</div></div><div class="sn-label">HSK 5級</div></div>
+      <div class="conn-v" id="cv-hsk5-6" style="height:28px;"></div>
+      <div class="sn available" id="n-hsk6" style="--nc:#ff7020;--ng:#ff702040" onclick="tap('hsk6')">
+        <div class="sn-circle">🀄<div class="sn-badge">✦</div></div><div class="sn-label">HSK 6級</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="sn available" id="n-korean3" style="--nc:#ffd060;--ng:#ffd06040" onclick="tap('korean3')">
+        <div class="sn-circle">🇰🇷<div class="sn-badge">✦</div></div><div class="sn-label">TOPIK 3級</div></div>
+      <div class="conn-v" id="cv-kor3-4" style="height:28px;"></div>
+      <div class="sn available" id="n-korean4" style="--nc:#ff9840;--ng:#ff984040" onclick="tap('korean4')">
+        <div class="sn-circle">🇰🇷<div class="sn-badge">✦</div></div><div class="sn-label">TOPIK 4級</div></div>
+      <div class="conn-v" id="cv-kor4-5" style="height:28px;"></div>
+      <div class="sn available" id="n-korean5" style="--nc:#ffa040;--ng:#ffa04040" onclick="tap('korean5')">
+        <div class="sn-circle">🇰🇷<div class="sn-badge">✦</div></div><div class="sn-label">TOPIK 5級</div></div>
+      <div class="conn-v" id="cv-kor5-6" style="height:28px;"></div>
+      <div class="sn available" id="n-korean6" style="--nc:#ff6000;--ng:#ff600040" onclick="tap('korean6')">
+        <div class="sn-circle">🇰🇷<div class="sn-badge">✦</div></div><div class="sn-label">TOPIK 6級</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="sn available" id="n-french" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('french')">
+        <div class="sn-circle">🇫🇷<div class="sn-badge">✦</div></div><div class="sn-label">仏検 2級</div></div>
+      <div class="conn-v" id="cv-fr2-1a" style="height:28px;"></div>
+      <div class="sn available" id="n-french1" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('french1')">
+        <div class="sn-circle">🇫🇷<div class="sn-badge">✦</div></div><div class="sn-label">仏検 1級</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="sn available" id="n-spanish" style="--nc:var(--c-lang);--ng:#ff880040" onclick="tap('spanish')">
+        <div class="sn-circle">🇪🇸<div class="sn-badge">✦</div></div><div class="sn-label">西検 2級</div></div>
+      <div class="conn-v" id="cv-sp2-1" style="height:28px;"></div>
+      <div class="sn available" id="n-spanish1" style="--nc:#ffc060;--ng:#ffc06040" onclick="tap('spanish1')">
+        <div class="sn-circle">🇪🇸<div class="sn-badge">✦</div></div><div class="sn-label">西検 1級</div></div>
+    </div>
   </div>
-
-  <div class="sec-head">漢字検定</div>
-  <div class="node-row">
-    <div class="sn available" id="n-kanji3" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanji3')">
-      <div class="sn-circle">📚<div class="sn-badge">✦</div></div><div class="sn-label">漢検 3級</div></div>
-    <div class="sn available" id="n-kanjiPre2" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanjiPre2')">
-      <div class="sn-circle">📚<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 準2級</div></div>
-    <div class="sn available" id="n-kanji2" style="--nc:#d87840;--ng:#d8784040" onclick="tap('kanji2')">
-      <div class="sn-circle">📚<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 2級</div></div>
-  </div>
-  <div class="node-row">
-    <div class="sn available" id="n-kanjiPre1" style="--nc:#e8b84b;--ng:#e8b84b40" onclick="tap('kanjiPre1')">
-      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 準1級</div></div>
-    <div class="sn available" id="n-kanji1" style="--nc:#ffcc00;--ng:#ffcc0040" onclick="tap('kanji1')">
-      <div class="sn-circle">🏛️<div class="sn-badge">🔒</div></div><div class="sn-label">漢検 1級</div></div>
-  </div>
-</div></div>
-
 <!-- ===== IT ===== -->
 <div class="tree-screen" id="screen-it">
 <div class="tree-wrap">
@@ -681,7 +719,10 @@ canvas#radar{display:block;}
   </div>
 </div></div>
 
+</div></div>
+
 <!-- ===== 運転・乗り物 ===== -->
+
 <div class="tree-screen" id="screen-drive">
 <div class="tree-wrap">
   <div class="sec-head">自動車免許</div>
@@ -720,6 +761,7 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- ===== 医療・福祉 ===== -->
+
 <div class="tree-screen" id="screen-medical">
 <div class="tree-wrap">
   <div class="sec-head">医療</div>
@@ -752,6 +794,7 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- ===== 建築・土木 ===== -->
+
 <div class="tree-screen" id="screen-arch">
 <div class="tree-wrap">
 
@@ -829,6 +872,7 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- ===== デザイン・美容 ===== -->
+
 <div class="param-screen" id="screen-design">
 <div class="tree-wrap">
 
@@ -889,6 +933,7 @@ canvas#radar{display:block;}
 </div></div>
 
 <!-- オーバーレイ＆シート -->
+
 <div class="overlay" id="overlay" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
   <div class="sheet-handle"></div>
@@ -1099,6 +1144,34 @@ const SK = {
             diff:'★★★★★', period:'2〜3年', exam:'年3回', cost:'約11,800円',
             links:[{t:'英検公式',u:'https://www.eiken.or.jp/'}], req:[],
             params:{global:35}},
+  hsk4:    {l:'HSK 4級', g:'🀄 中国語', i:'🀄', c:'#ff9840',
+            d:'中級。1200単語、中国語圏での日常生活・仕事に対応できるレベル。',
+            diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'随時（CBT）', cost:'約7,000円',
+            links:[{t:'HSK日本実施委員会',u:'https://www.hskj.jp/'}], req:[], params:{global:18}},
+  hsk6:    {l:'HSK 6級', g:'🀄 中国語', i:'🀄', c:'#ff7020',
+            d:'最上級。5000語以上、中国語を自在に使いこなすネイティブに近いレベル。',
+            diff:'★★★★★', period:'2年以上', exam:'随時（CBT）', cost:'約10,000円',
+            links:[{t:'HSK日本実施委員会',u:'https://www.hskj.jp/'}], req:[], params:{global:35}},
+  korean4: {l:'TOPIK 4級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'#ff9840',
+            d:'中級上。日常会話・簡単なビジネス対応ができるレベル。就職でアピール可能。',
+            diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年3回', cost:'約5,000円',
+            links:[{t:'TOPIK',u:'https://www.topik.go.kr/'}], req:[], params:{global:18}},
+  korean5: {l:'TOPIK 5級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'#ffa040',
+            d:'上級。新聞・ドラマが理解でき、政治・経済・社会トピックを議論できるレベル。',
+            diff:'★★★★☆', period:'2年以上', exam:'年3回', cost:'約5,000円',
+            links:[{t:'TOPIK',u:'https://www.topik.go.kr/'}], req:[], params:{global:28}},
+  korean6: {l:'TOPIK 6級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'#ff5000',
+            d:'最上級。ネイティブに近い高度な韓国語運用能力。韓国企業就職でも強力。',
+            diff:'★★★★★', period:'3年以上', exam:'年3回', cost:'約5,000円',
+            links:[{t:'TOPIK',u:'https://www.topik.go.kr/'}], req:[], params:{global:35}},
+  french1: {l:'仏検 1級', g:'🇫🇷 フランス語', i:'🇫🇷', c:'#ffc060',
+            d:'最上級。高度な読解・作文・口述試験。合格率5%以下の超難関。',
+            diff:'★★★★★', period:'3年以上', exam:'年2回', cost:'約9,000円',
+            links:[{t:'仏検',u:'https://www.apefdapf.org/'}], req:[], params:{global:35}},
+  spanish1:{l:'西検 1級', g:'🇪🇸 スペイン語', i:'🇪🇸', c:'#ffc060',
+            d:'最上級。ネイティブに近い高度なスペイン語運用能力。合格率10%以下。',
+            diff:'★★★★★', period:'3年以上', exam:'年2回', cost:'約9,000円',
+            links:[{t:'西検',u:'https://www.dele.jp/'}], req:[], params:{global:35}},
   hsk3:    {l:'HSK 3級',    g:'🀄 中国語', i:'🀄', c:'var(--c-lang)',
             d:'日常会話レベルの中国語。HSKは数字が大きいほど上級。600単語が目安。',
             diff:'★★☆☆☆', period:'3〜4ヶ月', exam:'月1回', cost:'約6,000円',
@@ -1109,15 +1182,15 @@ const SK = {
             diff:'★★★★☆', period:'1〜2年', exam:'月1回', cost:'約6,000円',
             links:[{t:'HSK公式',u:'https://www.hskj.jp/'}], req:[],
             params:{global:25}},
-  korean3: {l:'韓国語 3級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'var(--c-lang)',
+  korean3: {l:'TOPIK 3級', g:'🇰🇷 韓国語', i:'🇰🇷', c:'var(--c-lang)',
             d:'韓国語能力試験（TOPIK）3級。日常会話がある程度できるレベル。',
             diff:'★★☆☆☆', period:'3〜6ヶ月', exam:'年2〜3回', cost:'約5,000円',
             links:[], req:[], params:{global:12}},
-  french:  {l:'仏検 3級',   g:'🇫🇷 フランス語', i:'🇫🇷', c:'#ffa040',
+  french:  {l:'仏検 2級',   g:'🇫🇷 フランス語', i:'🇫🇷', c:'#ffa040',
             d:'フランス語の基礎。ファッション・料理・観光業界での差別化に有効。',
             diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年2回（6・11月）', cost:'約5,000円',
             links:[], req:[], params:{global:12}},
-  spanish: {l:'西検 3級',   g:'🇪🇸 スペイン語', i:'🇪🇸', c:'#ffa040',
+  spanish: {l:'西検 2級',   g:'🇪🇸 スペイン語', i:'🇪🇸', c:'#ffa040',
             d:'スペイン語の基礎。話者人口が世界第2位の言語で需要が高い。',
             diff:'★★★☆☆', period:'6ヶ月〜1年', exam:'年2回', cost:'約5,000円',
             links:[], req:[], params:{global:12}},
@@ -1340,6 +1413,30 @@ const SK = {
             d:'土地・建物の所在・形状・面積などを調査・測量し登記申請を行う専門家。毎年約8%の合格率。',
             diff:'★★★★★', period:'1〜2年', exam:'年1回（10月）', cost:'約8,000円',
             links:[], req:[], params:{knowledge:20,skill:10}},
+  cmta3:   {l:'CMTA 1次試験', g:'💰 マネー', i:'📉', c:'#60d8ff',
+            d:'日本テクニカルアナリスト協会（NTAA）認定。チャート分析・テクニカル指標の基礎。1次〜3次の順に合格でCMTA取得。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'年2回', cost:'約10,000円',
+            links:[{t:'NTAA',u:'https://www.ntaa.or.jp/'}], req:[], params:{knowledge:15}},
+  cmta2:   {l:'CMTA 2次試験', g:'💰 マネー', i:'📉', c:'#40b8f0',
+            d:'テクニカル分析の応用・実践。相場理論・オシレーター・トレンド系指標を深く学ぶ。',
+            diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年2回', cost:'約10,000円',
+            links:[{t:'NTAA',u:'https://www.ntaa.or.jp/'}], req:[], params:{knowledge:22}},
+  cmta1:   {l:'CMTA 3次試験', g:'💰 マネー', i:'📉', c:'#2090d0',
+            d:'最終試験。実際のチャート分析・レポート作成。合格でCMTA（認定テクニカルアナリスト）称号取得。',
+            diff:'★★★★☆', period:'1年以上', exam:'年2回', cost:'約10,000円',
+            links:[{t:'NTAA',u:'https://www.ntaa.or.jp/'}], req:[], params:{knowledge:30}},
+  cfte1:   {l:'CFTe I', g:'💰 マネー', i:'🌐', c:'#a060ff',
+            d:'IFTA（国際テクニカルアナリスト連盟）認定。国際資格の第一段階。選択式・英語試験。',
+            diff:'★★★☆☆', period:'3〜6ヶ月', exam:'随時（CBT）', cost:'約400USD',
+            links:[{t:'IFTA',u:'https://www.ifta.org/'}], req:[], params:{knowledge:18,global:5}},
+  cfte2:   {l:'CFTe II', g:'💰 マネー', i:'🌐', c:'#8040e0',
+            d:'IFTAの上位資格。記述式・実際のチャート分析が求められる本格派。世界で通用する証。',
+            diff:'★★★★☆', period:'1年以上', exam:'年2回', cost:'約600USD',
+            links:[{t:'IFTA',u:'https://www.ifta.org/'}], req:[], params:{knowledge:28,global:8}},
+  mfta:    {l:'MFTA', g:'💰 マネー', i:'🏆', c:'#6020c0',
+            d:'CFTeの最上位。オリジナル論文の提出・審査が必要。世界最高峰のテクニカルアナリスト資格。',
+            diff:'★★★★★', period:'2年以上', exam:'論文審査', cost:'約800USD',
+            links:[{t:'IFTA',u:'https://www.ifta.org/'}], req:[], params:{knowledge:40,global:15}},
   urban:    {l:'都市計画士（AICP）', g:'🏙️ 都市計画', i:'🏙️', c:'#90b040',
             d:'まちづくり・都市計画の専門家。公共機関やコンサルタントでの需要が高く、民間でも活躍できる。',
             diff:'★★★★☆', period:'6ヶ月〜1年', exam:'年1回（6〜10月）', cost:'約9,000円',
@@ -1506,6 +1603,12 @@ const TAGS = {
   'kantei': ['国家', '独学OK', '年2回'],
   'kanteishi': ['国家', '独学OK', '年1回'],
   'urban': ['民間', '実務経験必要', '年1回'],
+  'cmta3': ['民間', '独学OK', '年2回'],
+  'cmta2': ['民間', '独学OK', '年2回'],
+  'cmta1': ['民間', '独学OK', '年2回'],
+  'cfte1': ['民間', '独学OK', 'CBT随時'],
+  'cfte2': ['民間', '独学OK', '年2回'],
+  'mfta':  ['民間', '実務経験必要', '随時'],
   'color-uc': ['民間', '独学OK', '年2回'],
   'color3':   ['民間', '独学OK', '年2回'],
   'color2':   ['民間', '独学OK', '年2回'],
@@ -1523,6 +1626,14 @@ const TAGS = {
   'makeup3':  ['民間', '独学OK', '年2回'],
   'makeup2':  ['民間', '独学OK', '年2回'],
   'makeup1':  ['民間', '独学OK', '年2回'],
+  'korean4': ['民間', '独学OK', '年3回'],
+  'korean5': ['民間', '独学OK', '年3回'],
+  'korean6': ['民間', '独学OK', '年3回'],
+  'hsk4':    ['民間', '独学OK', 'CBT随時'],
+  'hsk6':    ['民間', '独学OK', 'CBT随時'],
+  'french1': ['民間', '独学OK', '年2回'],
+  'french2': ['民間', '独学OK', '年2回'],
+  'spanish1':['民間', '独学OK', '年2回'],
 };
 
 // コネクター更新対象
@@ -2013,5 +2124,6 @@ document.addEventListener('DOMContentLoaded', function(){
   load(); render();
 });
 </script>
+
 </body>
 </html>
