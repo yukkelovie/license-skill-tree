@@ -371,16 +371,17 @@ box-shadow:0 0 28px var(–sc,var(–gold));}
 
 /* トースト */
 .toast{
-position:fixed;top:44%;left:50%;
-transform:translateX(-50%) translateY(-8px) scale(.92);
-background:#0d1528;border:1px solid var(–gold);
-border-radius:28px;padding:12px 28px;
-font-size:14px;font-weight:700;color:var(–gold);
-box-shadow:0 0 32px #e8b84b44;
-opacity:0;transition:all .35s cubic-bezier(.34,1.4,.64,1);
-pointer-events:none;white-space:nowrap;z-index:10001;
+position:fixed;bottom:80px;left:50%;
+margin-left:-120px;width:240px;text-align:center;
+background:#0d1528;border:2px solid var(–gold);
+border-radius:32px;padding:14px 20px;
+font-size:14px;font-weight:800;color:var(–gold);
+box-shadow:0 0 40px #e8b84b55;
+opacity:0;transition:opacity .3s ease;
+pointer-events:none;
+z-index:2147483647;
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+.toast.show{opacity:1;}
 
 /* ===== タグバッジ ===== */
 .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
@@ -2158,7 +2159,7 @@ function doAction(){
   const id=curId; if(!id) return;
   if(done(id)){
     // 取得済み → 未着手（連鎖リセット）
-    cascadeReset(id); toast(`${SK[id].l} を未着手に戻した`);
+    cascadeReset(id); toast('— 未着手に戻した');
   } else if(studying(id)){
     // 勉強中 → 取得済み
     doUnlock(id);
@@ -2179,7 +2180,7 @@ function setStatus(id, status){
     if(!can(id)&&!done(id)&&!studying(id)) return;
     if(done(id)){ cascadeReset(id); }
     state[id]='studying';
-    toast(`📖 ${SK[id].l} を勉強中に設定`);
+    toast('📖 勉強中に設定');
   } else {
     // null → 未着手
     if(done(id)) cascadeReset(id);
@@ -2241,7 +2242,7 @@ function doUnlock(id){
   if(autoUnlocked.length>0){
     toast(`🎉 ${SK[id].l} 解放！（${autoUnlocked.join('・')}も自動解放）`);
   } else {
-    toast(`🎉 ${SK[id].l} 解放！`);
+    toast('✅ 取得済みにした');
   }
 }
 
@@ -2283,7 +2284,26 @@ function burst(id){
 }
 
 let toastT=null;
-function toast(msg){}
+function toast(msg){
+  // 既存を削除
+  const old=document.getElementById('toast');
+  if(old) old.remove();
+  // bodyの直接の子として先頭に挿入（transformの封じ込めを回避）
+  const el=document.createElement('div');
+  el.id='toast';
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);'
+    +'background:#0d1528;border:2px solid #e8b84b;border-radius:32px;'
+    +'padding:14px 28px;font-size:14px;font-weight:800;color:#e8b84b;'
+    +'box-shadow:0 0 40px #e8b84b55;z-index:2147483647;'
+    +'pointer-events:none;white-space:nowrap;'
+    +'opacity:0;transition:opacity .3s ease;';
+  document.body.insertBefore(el, document.body.firstChild);
+  void el.offsetWidth;
+  el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2000);
+}
 
 // スワイプで閉じる
 (()=>{
