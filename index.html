@@ -235,7 +235,7 @@ canvas{display:block;width:100%;height:100%;}
     <div class="panel">
       <div class="panel-title">📂 CSV読み込み（列=1日分・縦に複数取引）</div>
       <div class="import-row">
-        <div class="fi"><label>日付</label><input type="date" id="imp-date"></div>
+        <div class="fi"><label>日付</label><input type="date" id="imp-date" max="2099-12-31" min="2000-01-01"></div>
         <label class="csv-label">
           <input type="file" id="csvFile" accept=".csv,.txt" onchange="loadCSV(this)">
           📄 CSVを選択
@@ -248,7 +248,7 @@ canvas{display:block;width:100%;height:100%;}
     <div class="panel">
       <div class="panel-title">✏️ 手入力</div>
       <div class="import-row">
-        <div class="fi"><label>日付</label><input type="date" id="in-date"></div>
+        <div class="fi"><label>日付</label><input type="date" id="in-date" max="2099-12-31" min="2000-01-01"></div>
         <div class="fi"><label>損益（円）</label><input type="number" id="in-pnl" placeholder="例: 3000 or -1500"></div>
         <button class="btn" onclick="addTrade()">追加</button>
       </div>
@@ -300,9 +300,9 @@ canvas{display:block;width:100%;height:100%;}
       </div>
       <!-- 期間フィルター -->
       <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap;">
-        <div class="fi" style="flex:1;min-width:110px;"><label>開始日</label><input type="date" id="log-from" onchange="drawLog()"></div>
+        <div class="fi" style="flex:1;min-width:110px;"><label>開始日</label><input type="date" id="log-from" onchange="drawLog()" max="2099-12-31" min="2000-01-01"></div>
         <div style="color:var(--dim);font-size:11px;padding-bottom:8px;">〜</div>
-        <div class="fi" style="flex:1;min-width:110px;"><label>終了日</label><input type="date" id="log-to" onchange="drawLog()"></div>
+        <div class="fi" style="flex:1;min-width:110px;"><label>終了日</label><input type="date" id="log-to" onchange="drawLog()" max="2099-12-31" min="2000-01-01"></div>
         <button class="btn btn-sm" onclick="resetLogFilter()">リセット</button>
       </div>
       <div class="log-header">
@@ -340,7 +340,7 @@ canvas{display:block;width:100%;height:100%;}
 <div id="editModal">
   <div class="edit-inner">
     <div class="edit-title">✏️ 取引を編集</div>
-    <div class="edit-row"><label>日付</label><input type="date" id="edit-date"></div>
+    <div class="edit-row"><label>日付</label><input type="date" id="edit-date" max="2099-12-31" min="2000-01-01"></div>
     <div class="edit-row"><label>損益（円）</label><input type="number" id="edit-pnl"></div>
     <div class="edit-btns">
       <button class="btn btn-jade" onclick="saveEdit()">保存</button>
@@ -361,6 +361,7 @@ let achState={}, trades=[], editIdx=-1;
 async function sbFetch(path, method='GET', body=null){
   const opts={
     method,
+    mode:'cors',
     headers:{
       'apikey': SUPABASE_KEY,
       'Authorization': 'Bearer '+SUPABASE_KEY,
@@ -584,7 +585,8 @@ function renderAnalytics(){
   if(!show){
     // データなしのときトップカードをリセット
     const pel=document.getElementById('s-pnl');
-    pel.textContent='¥0';pel.style.color='var(--gold)';pel.style.webkitTextFillColor='#e8b84b';
+    pel.textContent='¥0';
+    pel.style.color='var(--dim)';pel.style.webkitTextFillColor='#3a4a6a';
     document.getElementById('s-wr').textContent='0%';
     document.getElementById('s-pf').textContent='0.0';
     document.getElementById('s-rr').textContent='0.0';
