@@ -85,6 +85,21 @@ body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sa
   -webkit-text-fill-color:#e8d8b0 !important;
 }
 .fi input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b84b22;}
+.date-sel{display:flex;gap:4px;align-items:center;}
+.date-sel select{
+  background:#0d1528 !important;border:1px solid #2a3a5a;
+  border-radius:8px;color:#e8d8b0 !important;
+  -webkit-text-fill-color:#e8d8b0 !important;
+  font-family:'Zen Kaku Gothic New',sans-serif;font-size:13px;
+  padding:9px 6px;outline:none;transition:border .2s;
+  -webkit-appearance:none;appearance:none;
+  text-align:center;cursor:pointer;
+}
+.date-sel select:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b84b22;}
+.date-sel .sel-y{width:72px;}
+.date-sel .sel-m{width:52px;}
+.date-sel .sel-d{width:52px;}
+.date-sel span{color:#3a4a6a;font-size:11px;}
 /* カレンダーアイコンを金色に */
 .fi input[type=date]::-webkit-calendar-picker-indicator{
   filter:invert(1) brightness(2);
@@ -235,7 +250,7 @@ canvas{display:block;width:100%;height:100%;}
     <div class="panel">
       <div class="panel-title">📂 CSV読み込み（列=1日分・縦に複数取引）</div>
       <div class="import-row">
-        <div class="fi"><label>日付</label><input type="date" id="imp-date" max="2099-12-31" min="2000-01-01"></div>
+        <div class="fi"><label>日付</label><div class="date-sel" id="imp-date-wrap"><select class="sel-y" id="imp-date-y"></select><span>/</span><select class="sel-m" id="imp-date-m"></select><span>/</span><select class="sel-d" id="imp-date-d"></select></div></div>
         <label class="csv-label">
           <input type="file" id="csvFile" accept=".csv,.txt" onchange="loadCSV(this)">
           📄 CSVを選択
@@ -248,7 +263,7 @@ canvas{display:block;width:100%;height:100%;}
     <div class="panel">
       <div class="panel-title">✏️ 手入力</div>
       <div class="import-row">
-        <div class="fi"><label>日付</label><input type="date" id="in-date" max="2099-12-31" min="2000-01-01"></div>
+        <div class="fi"><label>日付</label><div class="date-sel" id="in-date-wrap"><select class="sel-y" id="in-date-y"></select><span>/</span><select class="sel-m" id="in-date-m"></select><span>/</span><select class="sel-d" id="in-date-d"></select></div></div>
         <div class="fi"><label>損益（円）</label><input type="number" id="in-pnl" placeholder="例: 3000 or -1500"></div>
         <button class="btn" onclick="addTrade()">追加</button>
       </div>
@@ -300,9 +315,9 @@ canvas{display:block;width:100%;height:100%;}
       </div>
       <!-- 期間フィルター -->
       <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap;">
-        <div class="fi" style="flex:1;min-width:110px;"><label>開始日</label><input type="date" id="log-from" onchange="drawLog()" max="2099-12-31" min="2000-01-01"></div>
+        <div class="fi" style="flex:1;min-width:110px;"><label>開始日</label><div class="date-sel" id="log-from-wrap"><select class="sel-y" id="log-from-y" onchange="drawLog()"></select><span>/</span><select class="sel-m" id="log-from-m" onchange="drawLog()"></select><span>/</span><select class="sel-d" id="log-from-d" onchange="drawLog()"></select></div></div>
         <div style="color:var(--dim);font-size:11px;padding-bottom:8px;">〜</div>
-        <div class="fi" style="flex:1;min-width:110px;"><label>終了日</label><input type="date" id="log-to" onchange="drawLog()" max="2099-12-31" min="2000-01-01"></div>
+        <div class="fi" style="flex:1;min-width:110px;"><label>終了日</label><div class="date-sel" id="log-to-wrap"><select class="sel-y" id="log-to-y" onchange="drawLog()"></select><span>/</span><select class="sel-m" id="log-to-m" onchange="drawLog()"></select><span>/</span><select class="sel-d" id="log-to-d" onchange="drawLog()"></select></div></div>
         <button class="btn btn-sm" onclick="resetLogFilter()">リセット</button>
       </div>
       <div class="log-header">
@@ -340,7 +355,7 @@ canvas{display:block;width:100%;height:100%;}
 <div id="editModal">
   <div class="edit-inner">
     <div class="edit-title">✏️ 取引を編集</div>
-    <div class="edit-row"><label>日付</label><input type="date" id="edit-date" max="2099-12-31" min="2000-01-01"></div>
+    <div class="edit-row"><label>日付</label><div class="date-sel" id="edit-date-wrap"><select class="sel-y" id="edit-date-y"></select><span>/</span><select class="sel-m" id="edit-date-m"></select><span>/</span><select class="sel-d" id="edit-date-d"></select></div></div>
     <div class="edit-row"><label>損益（円）</label><input type="number" id="edit-pnl"></div>
     <div class="edit-btns">
       <button class="btn btn-jade" onclick="saveEdit()">保存</button>
@@ -427,7 +442,7 @@ function nextBizDay(dateStr){
 // ===== CSV読み込み =====
 // 構造: 列=1日分の取引（縦に複数取引）、空列=土日（連続でも1回だけ翌営業日へ）
 function loadCSV(input){
-  const rawDate=document.getElementById('imp-date').value;
+  const rawDate=getDateSel('imp-date');
   if(!rawDate){showToast('⚠️ 先に日付を選択してください');input.value='';return;}
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -484,7 +499,7 @@ function loadCSV(input){
 
 // ===== 手入力 =====
 function addTrade(){
-  const date=document.getElementById('in-date').value;
+  const date=getDateSel('in-date');
   const pnl=parseFloat(document.getElementById('in-pnl').value);
   if(!date||isNaN(pnl)){showToast('⚠️ 日付と損益を入力してください');return;}
   trades.push({date,pnl,id:Date.now()+'_'+Math.random()});
@@ -509,8 +524,8 @@ function clearAll(){
 }
 
 function clearPeriod(){
-  const from=document.getElementById('log-from').value;
-  const to=document.getElementById('log-to').value;
+  const from=getDateSel('log-from');
+  const to=getDateSel('log-to');
   if(!from&&!to){showToast('⚠️ 期間を指定してください');return;}
   const label=(from||'〜')+' 〜 '+(to||'〜');
   showConfirm(label+'\nの取引を削除しますか？', ()=>{
@@ -528,7 +543,7 @@ function clearPeriod(){
 function openEdit(id){
   const t=trades.find(t=>String(t.id)===String(id));if(!t)return;
   editIdx=id;
-  document.getElementById('edit-date').value=t.date;
+  setDateSel('edit-date',t.date);
   document.getElementById('edit-pnl').value=t.pnl;
   document.getElementById('editModal').classList.add('open');
 }
@@ -538,7 +553,7 @@ function closeEdit(){
 }
 function saveEdit(){
   const t=trades.find(t=>String(t.id)===String(editIdx));if(!t)return;
-  const date=document.getElementById('edit-date').value;
+  const date=getDateSel('edit-date');
   const pnl=parseFloat(document.getElementById('edit-pnl').value);
   if(!date||isNaN(pnl)){showToast('⚠️ 入力を確認してください');return;}
   t.date=date;t.pnl=pnl;
@@ -600,9 +615,7 @@ function renderAnalytics(){
   // ログのデフォルト: 最後に取り込んだ日付
   if(trades.length){
     const lastDate=trades[trades.length-1].date;
-    const logFrom=document.getElementById('log-from');
-    const logTo=document.getElementById('log-to');
-    if(!logFrom.value){ logFrom.value=lastDate; logTo.value=lastDate; }
+    if(!getDateSel('log-from')){ setDateSel('log-from',lastDate); setDateSel('log-to',lastDate); }
   }
   drawLog();
 }
@@ -797,14 +810,14 @@ function drawRank(){
 function resetLogFilter(){
   if(!trades.length)return;
   const lastDate=trades[trades.length-1].date;
-  document.getElementById('log-from').value=lastDate;
-  document.getElementById('log-to').value=lastDate;
+  setDateSel('log-from',lastDate);
+  setDateSel('log-to',lastDate);
   drawLog();
 }
 
 function drawLog(){
-  const from=document.getElementById('log-from').value;
-  const to=document.getElementById('log-to').value;
+  const from=getDateSel('log-from');
+  const to=getDateSel('log-to');
   let filtered=[...trades];
   if(from) filtered=filtered.filter(t=>t.date>=from);
   if(to)   filtered=filtered.filter(t=>t.date<=to);
@@ -1010,19 +1023,42 @@ function showToast(msg){
   setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2200);
 }
 
-// date入力の年を4桁に制限（iOS Safari対策）
-function limitDateYear(el){
-  el.addEventListener('change',function(){
-    const v=this.value;
-    if(!v)return;
-    const parts=v.split('-');
-    if(parts[0]&&parts[0].length>4){
-      parts[0]=parts[0].slice(-4);
-      this.value=parts.join('-');
-    }
-  });
+// ===== プルダウン日付ヘルパー =====
+function initDateSel(prefix, fromYear=2024, toYear=2030){
+  const yEl=document.getElementById(prefix+'-y');
+  const mEl=document.getElementById(prefix+'-m');
+  const dEl=document.getElementById(prefix+'-d');
+  if(!yEl)return;
+  // 年
+  yEl.innerHTML='<option value="">年</option>';
+  for(let y=fromYear;y<=toYear;y++) yEl.innerHTML+=`<option value="${y}">${y}</option>`;
+  // 月
+  mEl.innerHTML='<option value="">月</option>';
+  for(let m=1;m<=12;m++) mEl.innerHTML+=`<option value="${String(m).padStart(2,'0')}">${m}</option>`;
+  // 日
+  dEl.innerHTML='<option value="">日</option>';
+  for(let d=1;d<=31;d++) dEl.innerHTML+=`<option value="${String(d).padStart(2,'0')}">${d}</option>`;
 }
-document.querySelectorAll('input[type=date]').forEach(limitDateYear);
+function getDateSel(prefix){
+  const y=document.getElementById(prefix+'-y').value;
+  const m=document.getElementById(prefix+'-m').value;
+  const d=document.getElementById(prefix+'-d').value;
+  if(!y||!m||!d)return '';
+  return y+'-'+m+'-'+d;
+}
+function setDateSel(prefix, dateStr){
+  if(!dateStr)return;
+  const parts=dateStr.split('-');
+  const yEl=document.getElementById(prefix+'-y');
+  const mEl=document.getElementById(prefix+'-m');
+  const dEl=document.getElementById(prefix+'-d');
+  if(yEl) yEl.value=parts[0]||'';
+  if(mEl) mEl.value=parts[1]||'';
+  if(dEl) dEl.value=parts[2]||'';
+}
+
+// 全プルダウン初期化
+['imp-date','in-date','log-from','log-to','edit-date'].forEach(p=>initDateSel(p));
 
 // 初期化
 (async()=>{
@@ -1033,8 +1069,8 @@ document.querySelectorAll('input[type=date]').forEach(limitDateYear);
   const today=new Date();
   const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d=String(today.getDate()).padStart(2,'0');
   const todayStr=y+'-'+m+'-'+d;
-  document.getElementById('in-date').value=todayStr;
-  document.getElementById('imp-date').value=todayStr;
+  setDateSel('in-date',todayStr);
+  setDateSel('imp-date',todayStr);
 })();
 </script>
 </body>
