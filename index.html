@@ -87,8 +87,8 @@ body{background:var(--bg);color:var(--text);font-family:'Zen Kaku Gothic New',sa
 .fi input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #e8b84b22;}
 /* カレンダーアイコンを金色に */
 .fi input[type=date]::-webkit-calendar-picker-indicator{
-  filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);
-  cursor:pointer;opacity:.8;
+  filter:invert(1) brightness(2);
+  cursor:pointer;opacity:.9;
 }
 .csv-label{
   display:flex;align-items:center;justify-content:center;
@@ -1009,6 +1009,20 @@ function showToast(msg){
   void el.offsetWidth;el.style.opacity='1';
   setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2200);
 }
+
+// date入力の年を4桁に制限（iOS Safari対策）
+function limitDateYear(el){
+  el.addEventListener('change',function(){
+    const v=this.value;
+    if(!v)return;
+    const parts=v.split('-');
+    if(parts[0]&&parts[0].length>4){
+      parts[0]=parts[0].slice(-4);
+      this.value=parts.join('-');
+    }
+  });
+}
+document.querySelectorAll('input[type=date]').forEach(limitDateYear);
 
 // 初期化
 (async()=>{
