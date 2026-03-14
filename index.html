@@ -1969,8 +1969,10 @@ async function logout(){
 
 function useLocal(){
   document.getElementById('login-screen').style.display='none';
+  document.getElementById('user-bar').style.display='flex';
   document.getElementById('guest-bar').style.display='flex';
   document.getElementById('loggedin-bar').style.display='none';
+  document.getElementById('main-content').style.display='block';
   load();
   render();
 }
