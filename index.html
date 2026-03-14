@@ -560,6 +560,21 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
       Googleでログイン
     </button>
     <div id="login-error" style="color:#ff4444;font-size:11px;text-align:center;margin-top:12px;display:none;-webkit-text-fill-color:#ff4444;"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:16px;">
+      <div style="flex:1;height:1px;background:#1a2238;"></div>
+      <div style="font-size:10px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;">または</div>
+      <div style="flex:1;height:1px;background:#1a2238;"></div>
+    </div>
+    <button onclick="useLocal()" style="
+      width:100%;margin-top:12px;
+      background:none;border:1px solid #3a4a6a;border-radius:12px;
+      padding:12px;cursor:pointer;font-size:13px;font-weight:700;
+      color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;
+      font-family:sans-serif;transition:border-color .2s;
+    ">このデバイスのみで使う（ログイン不要）</button>
+  </div>
+  <div style="font-size:10px;color:#3a4a6a;margin-top:16px;text-align:center;line-height:1.8;-webkit-text-fill-color:#3a4a6a !important;">
+    ローカルモードはフレンド機能が使えません
   </div>
 </div>
 
@@ -1950,6 +1965,14 @@ async function logout(){
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('user-bar').style.display='none';
   document.getElementById('main-content').style.display='none';
+}
+
+function useLocal(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('guest-bar').style.display='flex';
+  document.getElementById('loggedin-bar').style.display='none';
+  load();
+  render();
 }
 
 function showMain(user){
