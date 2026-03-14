@@ -1253,6 +1253,7 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
   <div id="shTags"></div>
   <div id="shStatusBar"></div>
   <div id="shContrib"></div>
+  <div id="shFriends" style="margin-top:10px;"></div>
   <div id="shLinks"></div>
   <div id="shBtn"></div>
 </div>
@@ -2098,6 +2099,54 @@ async function addFriend(){
   }catch(e){ showFriendToast('❌ エラーが発生しました'); }
 }
 
+// フレンドのスキル状態をシートに表示
+let _friendsCache = null; // フレンド一覧キャッシュ
+
+async function loadFriendsCache(){
+  if(!_currentUser) return;
+  const friends = JSON.parse(localStorage.getItem('skill_friends_'+_currentUser.id)||'[]');
+  if(!friends.length){ _friendsCache=[]; return; }
+  try{
+    const res = await fetch(SUPABASE_URL+'/rest/v1/skill_states?user_id=in.('+friends.join(',')+')'+'&select=user_id,display_name,state_json', {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_currentSession?.access_token||SUPABASE_KEY)}
+    });
+    _friendsCache = await res.json();
+  }catch(e){ _friendsCache=[]; }
+}
+
+function renderFriendStatus(skillId){
+  const el = document.getElementById('shFriends');
+  if(!el) return;
+  if(!_currentUser||!_friendsCache||!_friendsCache.length){ el.innerHTML=''; return; }
+
+  const hasFriends = _friendsCache.filter(f=>{
+    const fs = JSON.parse(f.state_json||'{}');
+    return fs[skillId]==='done' || fs[skillId]==='studying';
+  });
+
+  if(!hasFriends.length){ el.innerHTML=''; return; }
+
+  const items = hasFriends.map(f=>{
+    const fs = JSON.parse(f.state_json||'{}');
+    const status = fs[skillId];
+    const name = f.display_name || f.user_id.replace(/-/g,'').slice(0,8).toUpperCase();
+    const isDone = status==='done';
+    const color = isDone ? '#2dcc8a' : '#e8b84b';
+    const icon = isDone ? '✓' : '📖';
+    const label = isDone ? '取得済み' : '勉強中';
+    return `<div style="display:inline-flex;align-items:center;gap:5px;
+      background:${isDone?'#071a0f':'#1a1200'};
+      border:1px solid ${color}66;border-radius:20px;
+      padding:4px 10px;font-size:11px;font-weight:700;
+      color:${color};-webkit-text-fill-color:${color} !important;">
+      ${icon} ${name} <span style="font-size:9px;opacity:.8;">${label}</span>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div style="margin-bottom:6px;font-size:9px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;letter-spacing:.1em;">👥 フレンドの状況</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">${items}</div>`;
+}
+
 async function loadFriends(){
   const listEl = document.getElementById('friend-list');
   if(!listEl) return;
@@ -2544,6 +2593,9 @@ function openSheet(id){
     `<a class="sh-link" href="${l.u}" target="_blank" rel="noopener">🔗 ${l.t}</a>`
   ).join('');
 
+  // フレンド情報
+  renderFriendStatus(id);
+
   const btn=document.getElementById('shBtn');
   btn.style.display='none';
   if(done(id)){btn.textContent='✓ 取得済み — タップで未着手に戻す';btn.className='sh-btn done-btn';}
@@ -2755,6 +2807,8 @@ function toast(msg){
       const loaded = await loadFromSupabase();
       if(!loaded) load();
       render();
+      // フレンドキャッシュ読み込み
+      loadFriendsCache();
     } else {
       // 未ログイン：ゲストモードで表示
       _currentUser = null;
