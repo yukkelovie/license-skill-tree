@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>資格スキルツリー</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Antique+Soft&family=Noto+Sans+JP:wght@300;400;700;900&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -533,6 +534,109 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
 
 </head>
 <body>
+
+<!-- ログイン画面 -->
+
+<div id="login-screen" style="
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#080c14;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;
+">
+  <div style="font-size:28px;margin-bottom:8px;">🌟</div>
+  <div style="font-family:serif;font-size:22px;color:#e8c84b;letter-spacing:.15em;margin-bottom:6px;">資格スキルツリー</div>
+  <div style="font-size:10px;color:#3a4a6a;letter-spacing:.15em;margin-bottom:48px;">SKILL TREE</div>
+  <div style="width:100%;max-width:320px;background:#0a0e1a;border:1px solid #1a2238;border-radius:20px;padding:28px 24px;">
+    <div style="font-size:13px;color:#c8d4f0;text-align:center;margin-bottom:24px;line-height:1.8;-webkit-text-fill-color:#c8d4f0;">
+      Googleアカウントでログインして<br>スキルツリーを管理しましょう
+    </div>
+    <button onclick="loginWithGoogle()" style="
+      width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+      background:#fff;border:none;border-radius:12px;
+      padding:14px;cursor:pointer;font-size:14px;font-weight:700;
+      color:#333;transition:opacity .2s;
+    ">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Googleでログイン
+    </button>
+    <div id="login-error" style="color:#ff4444;font-size:11px;text-align:center;margin-top:12px;display:none;-webkit-text-fill-color:#ff4444;"></div>
+  </div>
+</div>
+
+<!-- ユーザーバー -->
+
+<div id="user-bar" style="display:flex;background:#0a0e1a;border-bottom:1px solid #1a2238;padding:6px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;">
+  <!-- 未ログイン時 -->
+  <div id="guest-bar" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+    <span style="font-size:10px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;">👤 ゲストモード</span>
+    <button onclick="document.getElementById('login-screen').style.display='flex'" style="
+      background:linear-gradient(135deg,#1a1200,#2a1e00);
+      border:1px solid #e8b84b;border-radius:6px;
+      color:#e8b84b;font-size:10px;padding:4px 12px;cursor:pointer;
+      font-family:sans-serif;-webkit-text-fill-color:#e8b84b !important;font-weight:700;
+    ">🔑 ログインしてフレンドと繋がる</button>
+  </div>
+  <!-- ログイン時 -->
+  <div id="loggedin-bar" style="display:none;align-items:center;justify-content:space-between;width:100%;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <img id="user-avatar" src="" style="width:22px;height:22px;border-radius:50%;display:none;">
+      <span id="user-name" style="font-size:11px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;"></span>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button onclick="showFriends()" style="
+        background:linear-gradient(135deg,#001a0e,#002a18);
+        border:1px solid #2dcc8a;border-radius:6px;
+        color:#2dcc8a;font-size:10px;padding:4px 10px;cursor:pointer;
+        font-family:sans-serif;-webkit-text-fill-color:#2dcc8a !important;font-weight:700;
+      ">👥 フレンド</button>
+      <button onclick="logout()" style="
+        background:none;border:1px solid #3a4a6a;border-radius:6px;
+        color:#3a4a6a;font-size:10px;padding:3px 10px;cursor:pointer;
+        font-family:sans-serif;-webkit-text-fill-color:#3a4a6a !important;
+      ">ログアウト</button>
+    </div>
+  </div>
+</div>
+
+<!-- フレンドモーダル -->
+
+<div id="friend-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:#00000099;align-items:center;justify-content:center;">
+  <div style="background:#0d1528;border:1px solid #2dcc8a;border-radius:20px;padding:24px 20px;width:calc(100% - 40px);max-width:380px;max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:14px;font-weight:800;color:#2dcc8a;-webkit-text-fill-color:#2dcc8a !important;">👥 フレンド</div>
+      <button onclick="document.getElementById('friend-modal').style.display='none'" style="background:none;border:none;color:#3a4a6a;font-size:18px;cursor:pointer;-webkit-text-fill-color:#3a4a6a !important;">✕</button>
+    </div>
+    <!-- 自分のコード -->
+    <div style="background:#050810;border:1px solid #1a2238;border-radius:12px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:9px;color:#3a4a6a;margin-bottom:6px;-webkit-text-fill-color:#3a4a6a !important;">📋 自分のフレンドコード</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="my-friend-code" style="font-size:13px;font-weight:700;color:#e8b84b;letter-spacing:.1em;-webkit-text-fill-color:#e8b84b !important;flex:1;"></div>
+        <button onclick="copyFriendCode()" style="background:#1a1400;border:1px solid #e8b84b;border-radius:6px;color:#e8b84b;font-size:10px;padding:4px 10px;cursor:pointer;-webkit-text-fill-color:#e8b84b !important;">コピー</button>
+      </div>
+    </div>
+    <!-- フレンド追加 -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <input id="friend-code-input" placeholder="フレンドコードを入力" style="
+        flex:1;background:#050810;border:1px solid #2a3a5a;border-radius:8px;
+        color:#e8d8b0;padding:8px 10px;font-size:12px;outline:none;
+        -webkit-text-fill-color:#e8d8b0 !important;font-family:sans-serif;
+      ">
+      <button onclick="addFriend()" style="
+        background:linear-gradient(135deg,#001a0e,#002a18);
+        border:1px solid #2dcc8a;border-radius:8px;
+        color:#2dcc8a;font-size:11px;padding:8px 14px;cursor:pointer;
+        font-family:sans-serif;-webkit-text-fill-color:#2dcc8a !important;font-weight:700;
+        white-space:nowrap;
+      ">追加</button>
+    </div>
+    <!-- フレンドリスト -->
+    <div id="friend-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- メインコンテンツ -->
+
+<div id="main-content">
 
 <header class="header">
   <div class="logo">資格<em>スキルツリー</em></div>
@@ -1810,8 +1914,232 @@ let state = {}; // id -> 'studying' | 'done'
 let curId = null;
 let labelTimers = {};
 
-function load(){try{const s=localStorage.getItem(KEY);if(s)state=JSON.parse(s);}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+// ===== Supabase =====
+const SUPABASE_URL = 'https://rcdftwaqgvaeuuhyilyf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjZGZ0d2FxZ3ZhZXV1aHlpbHlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0OTA5OTEsImV4cCI6MjA4OTA2Njk5MX0.SwLDs0Il9wjqG5ZQAZrsO-szKl7Ud5RlkNADM0Gd7m4';
+const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    storageKey: 'sb-skill-auth-token',
+    storage: window.localStorage,
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+    lock: (name, acquireTimeout, fn) => fn()
+  }
+});
+let _currentUser = null;
+let _currentSession = null;
+
+async function loginWithGoogle(){
+  const btn = document.querySelector('#login-screen button');
+  if(btn){ btn.style.opacity='.6'; btn.textContent='リダイレクト中...'; }
+  const { error } = await _sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/' }
+  });
+  if(error){
+    const e = document.getElementById('login-error');
+    e.textContent='ログイン失敗: '+error.message; e.style.display='block';
+    if(btn){ btn.style.opacity='1'; btn.innerHTML='Googleでログイン'; }
+  }
+}
+
+async function logout(){
+  await _sb.auth.signOut();
+  _currentUser = null; state = {};
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('user-bar').style.display='none';
+  document.getElementById('main-content').style.display='none';
+}
+
+function showMain(user){
+  _currentUser = user;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('guest-bar').style.display='none';
+  document.getElementById('loggedin-bar').style.display='flex';
+  const meta = user.user_metadata||{};
+  document.getElementById('user-name').textContent = meta.full_name||meta.name||user.email||'';
+  const av = meta.avatar_url||meta.picture||'';
+  if(av){ const img=document.getElementById('user-avatar'); img.src=av; img.style.display='block'; }
+  // フレンドコード表示（UIDの先頭8文字）
+  const code = user.id.replace(/-/g,'').slice(0,8).toUpperCase();
+  const el = document.getElementById('my-friend-code');
+  if(el) el.textContent = code;
+}
+
+function copyFriendCode(){
+  const code = document.getElementById('my-friend-code').textContent;
+  navigator.clipboard.writeText(code).then(()=>showFriendToast('📋 コピーしました'));
+}
+
+function showFriendToast(msg){
+  const old=document.getElementById('_ftoast');if(old)old.remove();
+  const el=document.createElement('div');el.id='_ftoast';el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#0d1528;border:2px solid #2dcc8a;border-radius:20px;padding:10px 20px;font-size:12px;font-weight:700;color:#2dcc8a;z-index:99999;pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;-webkit-text-fill-color:#2dcc8a;';
+  document.body.appendChild(el);void el.offsetWidth;el.style.opacity='1';
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},2000);
+}
+
+async function showFriends(){
+  document.getElementById('friend-modal').style.display='flex';
+  await loadFriends();
+}
+
+// フレンドコードからuser_idを検索
+async function addFriend(){
+  const input = document.getElementById('friend-code-input');
+  const code = input.value.trim().toUpperCase();
+  if(!code||code.length<8){ showFriendToast('⚠️ コードを入力してください'); return; }
+  try{
+    // skill_statesからuser_idの先頭8文字が一致するユーザーを検索
+    const res = await fetch(SUPABASE_URL+'/rest/v1/skill_states?select=user_id,display_name&limit=100', {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_currentSession?.access_token||SUPABASE_KEY)}
+    });
+    const data = await res.json();
+    const found = data.find(r=>r.user_id.replace(/-/g,'').slice(0,8).toUpperCase()===code);
+    if(!found){ showFriendToast('❌ ユーザーが見つかりません'); return; }
+    if(found.user_id===_currentUser.id){ showFriendToast('⚠️ 自分は追加できません'); return; }
+    // フレンドリストに保存
+    const friends = JSON.parse(localStorage.getItem('skill_friends_'+_currentUser.id)||'[]');
+    if(friends.includes(found.user_id)){ showFriendToast('すでに追加済みです'); return; }
+    friends.push(found.user_id);
+    localStorage.setItem('skill_friends_'+_currentUser.id, JSON.stringify(friends));
+    input.value='';
+    await loadFriends();
+    showFriendToast('✅ フレンドを追加しました！');
+  }catch(e){ showFriendToast('❌ エラーが発生しました'); }
+}
+
+async function loadFriends(){
+  const listEl = document.getElementById('friend-list');
+  if(!listEl) return;
+  const friends = JSON.parse(localStorage.getItem('skill_friends_'+_currentUser.id)||'[]');
+  if(!friends.length){
+    listEl.innerHTML='<div style="text-align:center;color:#3a4a6a;font-size:11px;padding:16px;">フレンドはまだいません<br>コードを交換して追加しよう！</div>';
+    return;
+  }
+  listEl.innerHTML='<div style="text-align:center;color:#3a4a6a;font-size:10px;padding:8px;">読み込み中...</div>';
+  try{
+    const res = await fetch(SUPABASE_URL+'/rest/v1/skill_states?user_id=in.('+friends.join(',')+')'+'&select=user_id,display_name,state_json', {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_currentSession?.access_token||SUPABASE_KEY)}
+    });
+    const data = await res.json();
+    if(!data||!data.length){
+      listEl.innerHTML='<div style="text-align:center;color:#3a4a6a;font-size:11px;padding:16px;">フレンドのデータが見つかりません</div>';
+      return;
+    }
+    listEl.innerHTML = data.map(f=>{
+      const fstate = JSON.parse(f.state_json||'{}');
+      const done = Object.values(fstate).filter(v=>v==='done').length;
+      const studying = Object.values(fstate).filter(v=>v==='studying').length;
+      const code = f.user_id.replace(/-/g,'').slice(0,8).toUpperCase();
+      const name = f.display_name || code;
+      return `<div style="background:#050810;border:1px solid #1a2238;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#c8d4f0;-webkit-text-fill-color:#c8d4f0 !important;margin-bottom:4px;">${name}</div>
+          <div style="font-size:10px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;">🏆 解放 ${done}個 　📚 勉強中 ${studying}個</div>
+        </div>
+        <button onclick="viewFriendTree('${f.user_id}')" style="
+          background:linear-gradient(135deg,#001428,#001e38);
+          border:1px solid #4a8cff;border-radius:8px;
+          color:#4a8cff;font-size:10px;padding:6px 10px;cursor:pointer;
+          font-family:sans-serif;-webkit-text-fill-color:#4a8cff !important;font-weight:700;
+          white-space:nowrap;
+        ">ツリーを見る</button>
+      </div>`;
+    }).join('');
+  }catch(e){ listEl.innerHTML='<div style="text-align:center;color:#ff4444;font-size:11px;padding:16px;">読み込みエラー</div>'; }
+}
+
+// フレンドのツリーを閲覧モードで表示
+let _viewingFriend = null;
+async function viewFriendTree(userId){
+  try{
+    const res = await fetch(SUPABASE_URL+'/rest/v1/skill_states?user_id=eq.'+userId+'&select=state_json,display_name', {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(_currentSession?.access_token||SUPABASE_KEY)}
+    });
+    const data = await res.json();
+    if(!data||!data.length){ showFriendToast('❌ データが見つかりません'); return; }
+    _viewingFriend = {userId, state: JSON.parse(data[0].state_json||'{}'), name: data[0].display_name||userId.slice(0,8).toUpperCase()};
+    document.getElementById('friend-modal').style.display='none';
+    // 閲覧バナー表示
+    showViewBanner(_viewingFriend.name);
+    renderFriendTree();
+  }catch(e){ showFriendToast('❌ 読み込みエラー'); }
+}
+
+function showViewBanner(name){
+  let banner = document.getElementById('view-banner');
+  if(!banner){
+    banner = document.createElement('div');
+    banner.id='view-banner';
+    banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:500;background:#001428;border-top:2px solid #4a8cff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;';
+    document.body.appendChild(banner);
+  }
+  banner.innerHTML=`<span style="font-size:12px;color:#4a8cff;font-weight:700;-webkit-text-fill-color:#4a8cff !important;">👁 ${name} のスキルツリーを閲覧中</span>
+    <button onclick="exitFriendView()" style="background:#001428;border:1px solid #4a8cff;border-radius:6px;color:#4a8cff;font-size:10px;padding:4px 10px;cursor:pointer;-webkit-text-fill-color:#4a8cff !important;">自分に戻る</button>`;
+  banner.style.display='flex';
+}
+
+function exitFriendView(){
+  _viewingFriend = null;
+  const banner = document.getElementById('view-banner');
+  if(banner) banner.style.display='none';
+  render();
+}
+
+function renderFriendTree(){
+  // 一時的にstateを差し替えてrenderを呼ぶ
+  const myState = {...state};
+  state = _viewingFriend.state;
+  render();
+  state = myState;
+  // renderが上書きするのでviewingFriendを再設定
+  _viewingFriend.state; // 参照は維持
+}
+
+// Supabaseにスキル状態を保存するテーブル: skill_states (user_id, state_json)
+async function saveToSupabase(){
+  if(!_currentUser) return;
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/skill_states', {
+      method:'POST',
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+(_currentSession?.access_token||SUPABASE_KEY),
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({user_id: _currentUser.id, state_json: JSON.stringify(state), display_name: (_currentUser.user_metadata?.full_name||_currentUser.user_metadata?.name||_currentUser.email||'').slice(0,30), updated_at: new Date().toISOString()})
+    });
+  }catch(e){ console.error('save error',e); }
+}
+
+async function loadFromSupabase(){
+  if(!_currentUser) return false;
+  try{
+    const res = await fetch(SUPABASE_URL+'/rest/v1/skill_states?user_id=eq.'+_currentUser.id+'&select=state_json', {
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+(_currentSession?.access_token||SUPABASE_KEY),
+      }
+    });
+    const data = await res.json();
+    if(data&&data.length>0&&data[0].state_json){
+      state = JSON.parse(data[0].state_json);
+      return true;
+    }
+  }catch(e){ console.error('load error',e); }
+  return false;
+}
+
+function load(){
+  try{const s=localStorage.getItem(KEY+'_'+(_currentUser?.id||'local'));if(s)state=JSON.parse(s);}catch(e){}
+}
+function save(){
+  try{localStorage.setItem(KEY+'_'+(_currentUser?.id||'local'),JSON.stringify(state));}catch(e){}
+  saveToSupabase();
+}
 function done(id){return state[id]==='done';}
 function studying(id){return state[id]==='studying';}
 function can(id){
@@ -2314,11 +2642,44 @@ function toast(msg){
   sh.addEventListener('touchend',e=>{if(!drag)return;drag=false;const dy=e.changedTouches[0].clientY-sy;sh.style.transform='';if(dy>70)closeSheet();});
 })();
 
-document.addEventListener('DOMContentLoaded', function(){
-  load(); render();
-});
+// ===== 認証対応初期化 =====
+(async()=>{
+  if(window.location.hash && window.location.hash.includes('access_token')){
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+    if(access_token && refresh_token){
+      await _sb.auth.setSession({ access_token, refresh_token });
+      window.location.hash = '';
+    }
+  }
+
+  // まずゲストとして起動（localStorageから読み込み）
+  load();
+  render();
+
+  // 認証状態の変化を監視
+  _sb.auth.onAuthStateChange(async (event, session) => {
+    if(session && session.user){
+      _currentSession = session;
+      showMain(session.user);
+      // Supabaseから読み込み、なければlocalStorageから
+      const loaded = await loadFromSupabase();
+      if(!loaded) load();
+      render();
+    } else {
+      // 未ログイン：ゲストモードで表示
+      _currentUser = null;
+      _currentSession = null;
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('guest-bar').style.display='flex';
+      document.getElementById('loggedin-bar').style.display='none';
+    }
+  });
+})();
 </script>
 
 <div id="toast"></div>
+</div><!-- /#main-content -->
 </body>
 </html>
