@@ -594,8 +594,8 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
   <!-- ログイン時 -->
   <div id="loggedin-bar" style="display:none;align-items:center;justify-content:space-between;width:100%;">
     <div style="display:flex;align-items:center;gap:8px;">
-      <img id="user-avatar" src="" style="width:22px;height:22px;border-radius:50%;display:none;">
-      <span id="user-name" style="font-size:11px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;"></span>
+      <img id="user-avatar" src="" onclick="openNickModal()" style="width:22px;height:22px;border-radius:50%;display:none;cursor:pointer;">
+      <span id="user-name" onclick="openNickModal()" style="font-size:11px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;cursor:pointer;" title="タップしてニックネームを設定"></span>
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
       <button onclick="showFriends()" style="
@@ -646,6 +646,34 @@ padding:10px 8px;border-bottom:1px solid #111e30;cursor:pointer;
     </div>
     <!-- フレンドリスト -->
     <div id="friend-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- ニックネームモーダル -->
+
+<div id="nick-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:#00000099;align-items:center;justify-content:center;">
+  <div style="background:#0d1528;border:1px solid #e8b84b;border-radius:20px;padding:24px 20px;width:calc(100% - 40px);max-width:320px;">
+    <div style="font-size:14px;font-weight:800;color:#e8b84b;-webkit-text-fill-color:#e8b84b !important;margin-bottom:16px;">✏️ ニックネーム設定</div>
+    <div style="font-size:10px;color:#3a4a6a;-webkit-text-fill-color:#3a4a6a !important;margin-bottom:8px;">フレンドに表示される名前</div>
+    <input id="nick-input" maxlength="20" placeholder="ニックネームを入力（最大20文字）" style="
+      width:100%;background:#050810;border:1px solid #2a3a5a;border-radius:8px;
+      color:#e8d8b0;padding:10px 12px;font-size:13px;outline:none;
+      -webkit-text-fill-color:#e8d8b0 !important;font-family:sans-serif;
+      margin-bottom:16px;box-sizing:border-box;
+    ">
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveNick()" style="
+        flex:1;background:linear-gradient(135deg,#1a1200,#2a2000);
+        border:1px solid #e8b84b;border-radius:8px;
+        color:#e8b84b;font-size:12px;font-weight:700;padding:10px;cursor:pointer;
+        font-family:sans-serif;-webkit-text-fill-color:#e8b84b !important;
+      ">保存</button>
+      <button onclick="document.getElementById('nick-modal').style.display='none'" style="
+        flex:1;background:none;border:1px solid #3a4a6a;border-radius:8px;
+        color:#3a4a6a;font-size:12px;padding:10px;cursor:pointer;
+        font-family:sans-serif;-webkit-text-fill-color:#3a4a6a !important;
+      ">キャンセル</button>
+    </div>
   </div>
 </div>
 
@@ -1983,13 +2011,48 @@ function showMain(user){
   document.getElementById('guest-bar').style.display='none';
   document.getElementById('loggedin-bar').style.display='flex';
   const meta = user.user_metadata||{};
-  document.getElementById('user-name').textContent = meta.full_name||meta.name||user.email||'';
+  // ニックネームが保存済みならそれを表示
+  const savedNick = localStorage.getItem('skill_nick_'+user.id);
+  const displayName = savedNick || meta.full_name||meta.name||user.email||'';
+  document.getElementById('user-name').textContent = displayName + (savedNick ? ' ✏️' : ' ✏️');
   const av = meta.avatar_url||meta.picture||'';
   if(av){ const img=document.getElementById('user-avatar'); img.src=av; img.style.display='block'; }
   // フレンドコード表示（UIDの先頭8文字）
   const code = user.id.replace(/-/g,'').slice(0,8).toUpperCase();
   const el = document.getElementById('my-friend-code');
   if(el) el.textContent = code;
+}
+
+function openNickModal(){
+  const saved = localStorage.getItem('skill_nick_'+(_currentUser?.id||''));
+  const input = document.getElementById('nick-input');
+  if(input) input.value = saved || '';
+  document.getElementById('nick-modal').style.display='flex';
+  setTimeout(()=>input&&input.focus(), 100);
+}
+
+async function saveNick(){
+  const input = document.getElementById('nick-input');
+  const nick = input.value.trim();
+  if(!nick){ showFriendToast('⚠️ ニックネームを入力してください'); return; }
+  // localStorageに保存
+  localStorage.setItem('skill_nick_'+_currentUser.id, nick);
+  // Supabaseにも保存（display_nameを更新）
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/skill_states?user_id=eq.'+_currentUser.id, {
+      method:'PATCH',
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+(_currentSession?.access_token||SUPABASE_KEY),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({display_name: nick})
+    });
+  }catch(e){ console.error('nick save error',e); }
+  // user-barの名前を更新
+  document.getElementById('user-name').textContent = nick + ' ✏️';
+  document.getElementById('nick-modal').style.display='none';
+  showFriendToast('✅ ニックネームを保存しました');
 }
 
 function copyFriendCode(){
