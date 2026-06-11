@@ -1,14 +1,14 @@
-const CACHE_NAME = ‘app-v1’;
-const STATIC = [’/’];
+const CACHE_NAME = 'app-v1';
+const STATIC = ['/'];
 
-self.addEventListener(‘install’, e => {
+self.addEventListener('install', e => {
 e.waitUntil(
 caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC))
 );
 self.skipWaiting();
 });
 
-self.addEventListener(‘activate’, e => {
+self.addEventListener('activate', e => {
 e.waitUntil(
 caches.keys().then(keys =>
 Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
@@ -17,9 +17,9 @@ Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
 self.clients.claim();
 });
 
-self.addEventListener(‘fetch’, e => {
+self.addEventListener('fetch', e => {
 // Supabaseなど外部APIはキャッシュしない
-if(e.request.url.includes(‘supabase.co’) || e.request.url.includes(‘googleapis’)) {
+if(e.request.url.includes('supabase.co') || e.request.url.includes('googleapis')) {
 return;
 }
 e.respondWith(
